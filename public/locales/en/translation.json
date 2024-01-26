@@ -1,0 +1,16 @@
+{
+    "required-field" : "Required field",
+    "login": {
+        "title" : "Login",
+        "link" : "Don't have an account?",
+        "button" : "Login"
+    },
+    "email": {
+        "label" : "Email",
+        "valid" : "Must be a valid email"
+    },
+    "password" : {
+        "label" : "Password",
+        "forgot" : "Forgot Password?"
+    }
+}
