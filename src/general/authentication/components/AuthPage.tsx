@@ -5,12 +5,9 @@ import { Box, Grid, } from '@mui/material';
 import Logo from '../../components/Logo';
 import Background from './Background';
 
+import { Outlet } from "react-router-dom";
 
-export interface IAuthPageProps {
-  children: React.ReactNode,
-}
-
-export default function AuthPage({ children }: IAuthPageProps): React.JSX.Element {
+export default function AuthPage(): React.JSX.Element {
 
   return (
     <Box sx={{ minHeight: '100vh' }}>
@@ -23,7 +20,7 @@ export default function AuthPage({ children }: IAuthPageProps): React.JSX.Elemen
         }}
       >
         <Grid item xs={12} sx={{ ml: 3, mt: 3 }}>
-          <Logo />
+          <Logo size="large"/>
         </Grid>
         <Grid
           item
@@ -35,7 +32,7 @@ export default function AuthPage({ children }: IAuthPageProps): React.JSX.Elemen
           sx={{ minHeight: 'calc(100vh - 80px)' }}
         >
           <div>
-          {children}
+          <Outlet/>
           </div>
         </Grid>
       </Grid>

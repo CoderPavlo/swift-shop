@@ -1,32 +1,41 @@
 import React from 'react';
 
-import { useTranslation} from 'react-i18next';
-
-import useMediaQuery from '@mui/material/useMediaQuery';
 import ThemeComponent from './general/components/ThemeComponent';
+import { ThemeModeProvider } from './context/ThemeModeContext';
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import RegisterPage  from './general/authentication/RegisterPage';
+import Navbar from './buyer/Navbar/Navbar';
+import AuthPage from './general/authentication/components/AuthPage';
 import LoginPage from './general/authentication/LoginPage';
-
+import RegisterPage, { ERole, RegisterCard } from './general/authentication/RegisterPage';
 function App() {
 
-  const prefersMode: 'dark' | 'light' = useMediaQuery('(prefers-color-scheme: dark)') ? 'dark' : 'light';
-  const [mode, setMode] = React.useState<'dark' | 'light'>(prefersMode);
-
-
   return (
-    <ThemeComponent mode={mode}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LoginPage />}>
+    <ThemeModeProvider>
+      <ThemeComponent>
+        <BrowserRouter>
+          <Routes>
 
-          </Route>
-          <Route path='/login' element={<LoginPage />}/> 
-          <Route path='/register' element={<RegisterPage />}/> 
-        </Routes>
+            <Route path="/" element={<Navbar />}>
+              <Route index element={<div />} />
+              <Route path="cattegories" element={<div />} />
+              <Route path="cart" element={<div />} />
+              <Route path="dashboard" element={<div />} />
+              <Route path="profile" element={<div />} />
+            </Route>
+
+            <Route path="/" element={<AuthPage />}>
+              <Route path='login' element={<LoginPage />} />
+              <Route path='register/' element={<RegisterPage />} >
+                <Route index element={<RegisterCard role={ERole.BUYER} />} />
+                <Route path="shop" element={<RegisterCard role={ERole.SELLER} />} />
+              </Route>
+            </Route>
+
+          </Routes>
         </BrowserRouter>
-    </ThemeComponent>
+      </ThemeComponent>
+    </ThemeModeProvider>
   );
 }
 

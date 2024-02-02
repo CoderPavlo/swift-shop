@@ -1,6 +1,8 @@
 import React from 'react'
 import { createTheme, ThemeProvider, Theme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { useThemeMode } from '../../context/ThemeModeContext';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const darkPalette = {
   primary: {
@@ -11,7 +13,7 @@ const darkPalette = {
   },
   background: {
     default: '#181818',
-    paper: '#212121',
+    paper: '#252525',
   },
   error: {
     main: '#FF5733', // Червоний (Accent Color)
@@ -61,21 +63,28 @@ const lightPalette = {
 }
 
 export interface ITheme {
-  mode: 'light' | 'dark',
   children: React.ReactNode,
 }
 
 function ThemeComponent(props: ITheme): React.JSX.Element {
+  const { themeMode } = useThemeMode();
+  const prefersMode = useMediaQuery('(prefers-color-scheme: dark)') ? 'dark' : 'light';
+
+  function getMode(mode: 'dark' | 'light' | 'system'): 'dark' | 'light' {
+    if (mode === 'system')
+      return prefersMode;
+    return mode;
+  }
 
   const theme: Theme = React.useMemo(
     () =>
       createTheme({
         palette: {
-          mode: props.mode,
-          ...(props.mode === 'light' ? lightPalette : darkPalette),
+          mode: getMode(themeMode),
+          ...(themeMode === 'light' ? lightPalette : darkPalette),
         },
       }),
-    [props.mode]
+    [themeMode]
   );
 
   return (

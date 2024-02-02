@@ -1,19 +1,24 @@
 import React from 'react'
 
 import { Link } from 'react-router-dom';
-import { ButtonBase, Typography } from '@mui/material';
+import { ButtonBase, SxProps, Theme, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
-function Logo(): React.JSX.Element {
+interface ILogoProps {
+    size: "small" | "large",
+    sx?: SxProps<Theme>,
+}
+function Logo({size, sx}:ILogoProps): React.JSX.Element {
     const theme = useTheme();
     return (
         <ButtonBase
             disableRipple
             component={Link}
             to='/'
+            sx={sx}
         >
             <>
-            <svg fill="none" height="40" viewBox="0 0 48 48" width="40" xmlns="http://www.w3.org/2000/svg">
+            <svg fill="none" height={size==="large" ? "40" : "30"} viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                 <path d="m0 0h48v48h-48z" fill={theme.palette.primary.main} fillOpacity=".01" />
                 <g stroke={theme.palette.text.primary} strokeLinecap="round" strokeLinejoin="round" strokeWidth="4">
                     <path d="m4 12h40v8l-1.3985.8391c-2.2168 1.3301-4.9862 1.3301-7.203 0l-1.3985-.8391-1.3985.8391c-2.2168 1.3301-4.9862 1.3301-7.203 0l-1.3985-.8391-1.3985.8391c-2.2168 1.3301-4.9862 1.3301-7.203 0l-1.3985-.8391-1.3985.8391c-2.2168 1.3301-4.98619 1.3301-7.20297 0l-1.39853-.8391z" fill={theme.palette.primary.main} />
@@ -23,7 +28,7 @@ function Logo(): React.JSX.Element {
                 </g>
             </svg>
             </>
-            <Typography variant="h3" color='text' ml={1}>
+            <Typography variant={size==="large" ? "h3" : "h5"} color='text' ml="4px">
                 SwiftShop
             </Typography>
 
