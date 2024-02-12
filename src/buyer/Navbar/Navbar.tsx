@@ -29,8 +29,8 @@ export default function Navbar(): React.JSX.Element {
 
 
     return (
-        <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static" sx={{background: {xs: theme.palette.background.paper, sm: "transparent"}}} elevation={0}>
+        <Box sx={{ flexGrow: 1, display: 'flex' }}>
+            <AppBar position="fixed" sx={{background: {xs: theme.palette.background.paper, sm: "transparent"}}} elevation={0}>
                 <Toolbar sx={{marginInline: '8px', paddingInline: '8px', background: theme.palette.background.paper, borderRadius: '50px', top: {sm:'8px'}, height: '60px'}}>
                     <Logo size="small"/>
                     <Box sx={{ flexGrow: 1 }} />
@@ -57,9 +57,11 @@ export default function Navbar(): React.JSX.Element {
                     </Box>
                 </Toolbar>
             </AppBar>
-            <Outlet/>
-            <SettingsDrawer open={openSettings} handleSettingsOpen={handleSettingsOpen}/>
             <NavigateDrawer/>
+            <Box component="main" sx={{width: {xs: '100%', sm: 'calc(100% - 50px)'}, height: {xs: 'calc(100% - 116px)', sm: 'calc(100% - 60px)'}}}>
+                <Outlet/>
+            </Box>
+            <SettingsDrawer open={openSettings} handleSettingsOpen={handleSettingsOpen}/>
         </Box>
     )
 }
