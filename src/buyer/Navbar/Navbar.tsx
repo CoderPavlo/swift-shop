@@ -58,7 +58,7 @@ export default function Navbar(): React.JSX.Element {
                 </Toolbar>
             </AppBar>
             <NavigateDrawer/>
-            <Box component="main" sx={{width: {xs: '100%', sm: 'calc(100% - 50px)'}, height: {xs: 'calc(100% - 116px)', sm: 'calc(100% - 60px)'}}}>
+            <Box component="main" sx={{ padding: '8px', marginLeft: {xs: '0px', sm: '68px'}, marginRight: {xs: '0px', sm: '8px'}, marginTop: {xs:'58px', sm: '66px'}, width: {xs: '100%', sm: 'calc(100% - 74px)'}, height: {xs: 'calc(100% - 116px)', sm: 'calc(100% - 60px)'}}}>
                 <Outlet/>
             </Box>
             <SettingsDrawer open={openSettings} handleSettingsOpen={handleSettingsOpen}/>

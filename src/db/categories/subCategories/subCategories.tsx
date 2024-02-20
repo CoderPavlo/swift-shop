@@ -73,7 +73,7 @@ export const electronics : ISubCategories[] = [
     },
     {
         id: 2,
-        name: 'Телевізори та аудіо-системи',
+        name: 'Телевізори та аудіо',
         image: televisions_audio_systems,
     },
     {
@@ -252,7 +252,7 @@ export const beauty : ISubCategories[] = [
 export const tools : ISubCategories[] = [
     {
         id: 0,
-        name: 'Електроінструменти',
+        name: 'Електро інструменти',
         image: power_tools,
     },
     {

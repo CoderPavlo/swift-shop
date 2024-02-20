@@ -9,7 +9,7 @@ export const pages: ISetting[] = [
     },
     {
         title: 'pages.cattegories',
-        value: 'cattegories',
+        value: 'categories',
         icon: <AppsOutlined/>
     },
     {

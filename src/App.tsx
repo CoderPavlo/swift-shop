@@ -8,6 +8,10 @@ import Navbar from './buyer/Navbar/Navbar';
 import AuthPage from './general/authentication/components/AuthPage';
 import LoginPage from './general/authentication/LoginPage';
 import RegisterPage, { ERole, RegisterCard } from './general/authentication/RegisterPage';
+import HomePage from './buyer/HomePage/HomePage';
+import NavbarSkeleton from './buyer/Navbar/NavbarSkeleton';
+import { Suspense } from 'react';
+import HomeSkeleton from './buyer/HomePage/HomeSkeleton';
 function App() {
 
   return (
@@ -16,9 +20,9 @@ function App() {
         <BrowserRouter>
           <Routes>
 
-            <Route path="/" element={<Navbar />}>
-              <Route index element={<div />} />
-              <Route path="cattegories" element={<div />} />
+            <Route path="/" element={<Suspense fallback={<NavbarSkeleton/>}><Navbar /></Suspense>}>
+              <Route index element={<Suspense fallback={<HomeSkeleton/>}><HomePage /></Suspense>} />
+              <Route path="categories" element={<div />} />
               <Route path="cart" element={<div />} />
               <Route path="dashboard" element={<div />} />
               <Route path="profile" element={<div />} />

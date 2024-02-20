@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Button, Chip } from '@mui/material';
 
 
-
 import SearchIcon from '@mui/icons-material/Search';
 
 export default function Search(): React.JSX.Element {

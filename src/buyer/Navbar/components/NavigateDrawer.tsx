@@ -26,10 +26,10 @@ export default function NavigateDrawer(): React.JSX.Element {
 
   const drawerWidth = 60;
 
-  const firstPathSegment = window.location.href.split('/')[3];
+  const firstPathSegment = window.location.href.split('/')[3].split('?')[0];
   const desktop = useMediaQuery(theme.breakpoints.up('sm'));
   return (
-    <Box component="nav" sx={{width: 'fit-content'}}>
+    <Box component="nav" sx={{width: 'fit-content', position: {xs: 'inherit', sm: 'fixed'}}}>
       {desktop ?
         <Drawer
           variant="permanent"
@@ -56,7 +56,7 @@ export default function NavigateDrawer(): React.JSX.Element {
           <List>
             {pages.map((page, index) =>
               <ListItem key={index} disablePadding sx={{ height: '48px' }}>
-                <Tooltip title={t(page.title)}>
+                <Tooltip title={t(page.title)} placement='right'>
                   <ListItemButton onClick={() => navigate(page.value)}
                     sx={{
                       borderRadius: '80px',
@@ -74,7 +74,7 @@ export default function NavigateDrawer(): React.JSX.Element {
           </List>
         </Drawer>
         :
-        <BottomNavigation sx={{ width: '100%', position: 'absolute', top: 'calc(100vh - 56px)' }} value={firstPathSegment} onChange={(event, value) => navigate(value)}>
+        <BottomNavigation sx={{ zIndex: '1', width: '100%', position: 'fixed', top: 'calc(100vh - 56px)', background: theme.palette.background.paper }} value={firstPathSegment} onChange={(event, value) => navigate(value)}>
           {pages.map((page, index) =>
             <BottomNavigationAction
               key={index}

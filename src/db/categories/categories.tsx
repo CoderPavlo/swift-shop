@@ -83,3 +83,19 @@ export const categories : ICategories[] = [
         subCategories: furniture,
     },
 ]
+
+export function getRandomCategories(m:number):ISubCategories[]{
+    let allCategories : ISubCategories[] = [];
+    categories.forEach(element => {
+        allCategories.push(...element.subCategories);
+    });
+    // let result : ISubCategories[]=[];
+    // let n = allCategories.length;
+    // for(let i = 0; i<m; i++){
+    //     let j = Math.floor(Math.random()*n);
+    //     result.push(allCategories[j]);
+    //     allCategories.splice(j, 1);
+    //     n-=1;
+    // }
+    return allCategories;
+}
