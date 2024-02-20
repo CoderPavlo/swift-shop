@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { useSearchParams } from 'react-router-dom'
-import { Tabs, Tab, } from '@mui/material';
+import { Tabs, Tab, Pagination } from '@mui/material';
 
 import { SxProps } from '@mui/system';
 
@@ -45,10 +45,15 @@ export default function GoodsBlock({ children }: IGoodsBlock): React.JSX.Element
             tab: getValidValue('tab', 0, 3),
             page: getValidValue('page', 0, 11),
         });
+        // eslint-disable-next-line
     }, []);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setSearchParams({ tab: newValue.toString(), page: searchParams.get('page') || '0' });
+    };
+
+    const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
+        setSearchParams({ page: value.toString(), tab: searchParams.get('tab') || '0' });
     };
 
     return (
@@ -65,6 +70,14 @@ export default function GoodsBlock({ children }: IGoodsBlock): React.JSX.Element
                 <Tab label="Нові" sx={tabSx} value={UTabs.NEW} />
             </Tabs>
             <Goods />
+            <Pagination count={11} variant="outlined" color="primary" page={Number(searchParams.get('page'))} onChange={handleChangePage} 
+                size='large'
+                sx={{
+                    paddingBlock: 2,
+                    display: 'flex',
+                    justifyContent: 'center'
+                }}
+            />
         </>
     )
 }
