@@ -1,7 +1,6 @@
 import React from 'react'
-import {AppBar, Box, Toolbar, IconButton, Badge} from '@mui/material';
+import {AppBar, Box, Toolbar, IconButton, } from '@mui/material';
 
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import { Outlet } from "react-router-dom";
 import Search from './components/Search';
 import { useTheme } from '@mui/material/styles';
@@ -10,6 +9,8 @@ import {Settings, } from '@mui/icons-material';
 import SettingsDrawer from './components/SettingsDrawer';
 import NavigateDrawer from './components/NavigateDrawer';
 import Logo from '../../general/components/Logo';
+import Profile from './components/Profile';
+import Notifications from './components/Notifications';
 export default function Navbar(): React.JSX.Element {
   const theme = useTheme();
     const [openSettings, setOpenSettings] = React.useState<boolean>(false);
@@ -36,15 +37,9 @@ export default function Navbar(): React.JSX.Element {
                     <Box sx={{ flexGrow: 1 }} />
                     <Search/>
                     <Box sx={{ display: 'flex' }}>
-                        <IconButton
-                            size="large"
-                            aria-label="show 17 new notifications"
-                            color="secondary"
-                        >
-                            <Badge badgeContent={17} color="error">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>
+                        
+                        <Notifications/>
+                        <Profile/>
                         <IconButton
                             size="large"
                             edge="end"

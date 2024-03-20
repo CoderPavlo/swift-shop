@@ -52,7 +52,7 @@ import wedding_dress from './images/wedding_dress.png'
 
 
 
-interface IGoods {
+export interface IGoods {
     id: number,
     name: string,
     score: number,

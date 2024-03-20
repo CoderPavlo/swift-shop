@@ -43,13 +43,13 @@ export default function GoodsBlock({ children }: IGoodsBlock): React.JSX.Element
     React.useEffect(() => {
         setSearchParams({
             tab: getValidValue('tab', 0, 3),
-            page: getValidValue('page', 0, 11),
+            page: getValidValue('page', 1, 11),
         });
         // eslint-disable-next-line
     }, []);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setSearchParams({ tab: newValue.toString(), page: searchParams.get('page') || '0' });
+        setSearchParams({ tab: newValue.toString(), page: searchParams.get('page') || '1' });
     };
 
     const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {

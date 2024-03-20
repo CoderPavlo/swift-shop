@@ -4,7 +4,6 @@ import {
   Drawer,
   Paper,
   Divider,
-  ToggleButtonGroup,
   ToggleButton,
   Typography,
   IconButton,
@@ -16,27 +15,9 @@ import { modes, languages } from '../data/settings';
 import { useTheme } from "@mui/material/styles";
 import { useThemeMode } from "../../../context/ThemeModeContext";
 import { useTranslation } from 'react-i18next';
+import StyledToggleButtonGroup from "./StyledToggleButtonGroup";
 
-interface StyledToggleButtonGroupProps {
-  value: any,
-  onChange: (event: React.MouseEvent<HTMLElement, MouseEvent>, value: any) => void,
-  children: React.ReactNode,
-}
 
-const StyledToggleButtonGroup = ({ value, onChange, children }: StyledToggleButtonGroupProps) => {
-  return (
-    <ToggleButtonGroup
-      color="primary"
-      value={value}
-      exclusive
-      onChange={onChange}
-      aria-label="Platform"
-      sx={{ width: "100%", marginTop: "5px", marginBottom: "5px" }}
-    >
-      {children}
-    </ToggleButtonGroup>
-  );
-};
 
 interface IStyledTypographyProps {
   children: React.ReactNode,

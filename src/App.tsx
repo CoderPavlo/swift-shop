@@ -13,6 +13,10 @@ import NavbarSkeleton from './buyer/Navbar/NavbarSkeleton';
 import { Suspense } from 'react';
 import HomeSkeleton from './buyer/HomePage/HomeSkeleton';
 import CategoriesPage from './buyer/CategoriesPage/CategoriesPage';
+import CartPage from './buyer/CartPage/CartPage';
+import DashboardPage from './buyer/DashboardPage/DashboardPage';
+import ProfilePage from './buyer/ProfilePage/ProfilePage';
+import GoodPage from './buyer/GoodPage/GoodPage';
 function App() {
 
   return (
@@ -24,9 +28,10 @@ function App() {
             <Route path="/" element={<Suspense fallback={<NavbarSkeleton/>}><Navbar /></Suspense>}>
               <Route index element={<Suspense fallback={<HomeSkeleton/>}><HomePage /></Suspense>} />
               <Route path="categories" element={<CategoriesPage />} />
-              <Route path="cart" element={<div />} />
-              <Route path="dashboard" element={<div />} />
-              <Route path="profile" element={<div />} />
+              <Route path="cart" element={<CartPage />} />
+              <Route path="dashboard" element={<DashboardPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path='goods/:id' element={<GoodPage/>}/>
             </Route>
 
             <Route path="/" element={<AuthPage />}>
