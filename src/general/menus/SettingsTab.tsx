@@ -9,9 +9,9 @@ import {
     Collapse,
 } from "@mui/material";
 
-import { modes, languages } from '../data/settings';
+import { modes, languages } from '../settings/settings';
 
-import { useThemeMode } from "../../../context/ThemeModeContext";
+import { useThemeMode } from "../../context/ThemeModeContext";
 import { useTranslation } from 'react-i18next';
 import StyledToggleButtonGroup from './StyledToggleButtonGroup';
 import { ExpandLess, ExpandMore, Language, Contrast } from '@mui/icons-material';

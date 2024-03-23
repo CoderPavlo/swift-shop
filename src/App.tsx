@@ -3,20 +3,28 @@ import React from 'react';
 import ThemeComponent from './general/components/ThemeComponent';
 import { ThemeModeProvider } from './context/ThemeModeContext';
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from './buyer/Navbar/Navbar';
-import AuthPage from './general/authentication/components/AuthPage';
-import LoginPage from './general/authentication/LoginPage';
-import RegisterPage, { ERole, RegisterCard } from './general/authentication/RegisterPage';
-import HomePage from './buyer/HomePage/HomePage';
-import NavbarSkeleton from './buyer/Navbar/NavbarSkeleton';
-import { Suspense } from 'react';
-import HomeSkeleton from './buyer/HomePage/HomeSkeleton';
-import CategoriesPage from './buyer/CategoriesPage/CategoriesPage';
-import CartPage from './buyer/CartPage/CartPage';
-import DashboardPage from './buyer/DashboardPage/DashboardPage';
-import ProfilePage from './buyer/ProfilePage/ProfilePage';
-import GoodPage from './buyer/GoodPage/GoodPage';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { routes as buyerRoutes } from './buyer/routes';
+import { routes as sellerRoutes } from './seller/routes';
+import { routes as authRoutes } from './general/authentication/routes';
+
+export interface IRoute {
+  path: string,
+  element: React.ReactNode,
+  childrenRoutes?: IRoute[],
+}
+
+const renderRoutes = (nestedRoutes: IRoute[]) =>
+  nestedRoutes.map((route, index) => (
+    <Route
+      key={index}
+      path={route.path}
+      element={route.element}
+    >
+      {route.childrenRoutes && renderRoutes(route.childrenRoutes)}
+    </Route>
+  ));
+
 function App() {
 
   return (
@@ -25,22 +33,13 @@ function App() {
         <BrowserRouter>
           <Routes>
 
-            <Route path="/" element={<Suspense fallback={<NavbarSkeleton/>}><Navbar /></Suspense>}>
-              <Route index element={<Suspense fallback={<HomeSkeleton/>}><HomePage /></Suspense>} />
-              <Route path="categories" element={<CategoriesPage />} />
-              <Route path="cart" element={<CartPage />} />
-              <Route path="dashboard" element={<DashboardPage />} />
-              <Route path="profile" element={<ProfilePage />} />
-              <Route path='goods/:id' element={<GoodPage/>}/>
-            </Route>
+            {false && renderRoutes(buyerRoutes)}
 
-            <Route path="/" element={<AuthPage />}>
-              <Route path='login' element={<LoginPage />} />
-              <Route path='register/' element={<RegisterPage />} >
-                <Route index element={<RegisterCard role={ERole.BUYER} />} />
-                <Route path="shop" element={<RegisterCard role={ERole.SELLER} />} />
-              </Route>
-            </Route>
+            {renderRoutes(sellerRoutes)}
+
+            {renderRoutes(authRoutes)}
+
+            <Route path='*' element={<Navigate to='/' />} />
 
           </Routes>
         </BrowserRouter>

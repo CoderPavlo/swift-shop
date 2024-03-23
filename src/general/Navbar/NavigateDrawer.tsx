@@ -14,11 +14,16 @@ import {
 
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { alpha } from '@mui/material/styles';
-import { pages } from '../data/pages'
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from 'react-i18next';
-export default function NavigateDrawer(): React.JSX.Element {
+import { ISetting } from '../settings/settings';
+
+export interface INavigateDrawerProps {
+  pages: ISetting[],
+}
+
+export default function NavigateDrawer({pages}:INavigateDrawerProps): React.JSX.Element {
 
   const { t } = useTranslation();
   const theme = useTheme();
@@ -61,7 +66,6 @@ export default function NavigateDrawer(): React.JSX.Element {
                     sx={{
                       borderRadius: '80px',
                       marginInline: '5px',
-                      // background: page.value === firstPathSegment ? `linear-gradient(to right, ${alpha(theme.palette.primary.main, 0.1)}, transparent)` : 'transparent',
                       background: page.value === firstPathSegment ? alpha(theme.palette.primary.main, 0.1) : 'transparent',
                     }}>
                     <ListItemIcon sx={{ display: 'flex', justifyContent: 'center', color: page.value === firstPathSegment ? theme.palette.primary.main : theme.palette.secondary.main, minWidth: '20px', width: '100%' }}>

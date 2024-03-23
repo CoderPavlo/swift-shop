@@ -1,5 +1,6 @@
-import { ISetting } from "../../../general/settings/settings";
-import {HomeOutlined, AppsOutlined, ShoppingCartOutlined, InsertChartOutlined, ManageAccountsOutlined} from '@mui/icons-material';
+
+import {HomeOutlined, AppsOutlined, InboxOutlined, InsertChartOutlined, ManageAccountsOutlined} from '@mui/icons-material';
+import { ISetting } from '../../../general/settings/settings';
 
 export const pages: ISetting[] = [
     {
@@ -8,14 +9,14 @@ export const pages: ISetting[] = [
         icon: <HomeOutlined/>
     },
     {
-        title: 'pages.cattegories',
-        value: 'categories',
+        title: 'pages.goods',
+        value: 'goods',
         icon: <AppsOutlined/>
     },
     {
-        title: 'pages.cart',
-        value: 'cart',
-        icon: <ShoppingCartOutlined/>
+        title: 'pages.orders',
+        value: 'orders',
+        icon: <InboxOutlined/>
     },
     {
         title: 'pages.dashboard',

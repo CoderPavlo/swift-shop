@@ -10,12 +10,12 @@ import {
 } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
-import { modes, languages } from '../data/settings';
+import { modes, languages } from '../../../general/settings/settings';
 
 import { useTheme } from "@mui/material/styles";
 import { useThemeMode } from "../../../context/ThemeModeContext";
 import { useTranslation } from 'react-i18next';
-import StyledToggleButtonGroup from "./StyledToggleButtonGroup";
+import StyledToggleButtonGroup from "../../../general/menus/StyledToggleButtonGroup";
 
 
 

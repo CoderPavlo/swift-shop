@@ -3,8 +3,8 @@ import React from "react";
 
 import {DarkModeOutlined, LightModeOutlined, SettingsBrightnessOutlined} from "@mui/icons-material";
 
-import Ukraine from "../flags/Ukraine";
-import GreatBritain from "../flags/GreatBritain";
+import Ukraine from "./flags/Ukraine";
+import GreatBritain from "./flags/GreatBritain";
 
 export interface ISetting{
     title: string,
