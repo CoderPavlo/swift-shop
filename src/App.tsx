@@ -33,7 +33,7 @@ function App() {
         <BrowserRouter>
           <Routes>
 
-            {false && renderRoutes(buyerRoutes)}
+            {/* {renderRoutes(buyerRoutes)} */}
 
             {renderRoutes(sellerRoutes)}
 

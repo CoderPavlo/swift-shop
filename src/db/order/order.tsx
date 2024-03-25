@@ -44,6 +44,7 @@ export const orders: IOrder[] = [
         { id: 29, name: 'Водяний фільтр', score: 4.6, price: 59.99, discount: 15, image: water_filter },
         { id: 30, name: 'Іграшковий робот', score: 4.4, price: 49.99, discount: 0, image: toy_robot },
         { id: 31, name: 'Косметичний набір', score: 4.7, price: 29.99, discount: 0, image: cosmetic_set },
+        { id: 4, name: 'Кавоварка', score: 4.8, price: 79.99, discount: 2, image: cofee_machine },
 
     ] },
     { id: 5, shop: "ГіперЕлектроніка", shopId: 0, status: 3, total: 200, date: new Date(), goods: [

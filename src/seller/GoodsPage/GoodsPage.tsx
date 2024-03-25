@@ -43,7 +43,7 @@ export default function GoodsPage() {
 
             <Grid container spacing={2} sx={{ mt: '4px' }}>
                 {goods.map((good, index) =>
-                    <GoodCard key={index} type='seller' good={good}/>
+                    <GoodCard key={index} type='edit' good={good}/>
                 )}
             </Grid>
         </>

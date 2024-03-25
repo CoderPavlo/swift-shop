@@ -1,7 +1,9 @@
 import { IRoute } from "../App";
+import DashboardPage from "./DashboardPage/DashboardPage";
 import GoodsPage from "./GoodsPage/GoodsPage";
 import HomePage from "./HomePage/HomePage";
 import Navbar from "./Navbar/Navbar";
+import OrdersPage from "./OrdersPage/OrdersPage";
 
 export const routes: IRoute[] = [
     {
@@ -18,11 +20,11 @@ export const routes: IRoute[] = [
             },
             {
                 path: '/orders',
-                element: <div />,
+                element: <OrdersPage />,
             },
             {
                 path: '/dashboard',
-                element: <div />,
+                element: <DashboardPage />,
             },
             {
                 path: '/profile',

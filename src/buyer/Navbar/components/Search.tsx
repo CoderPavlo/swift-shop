@@ -11,7 +11,7 @@ export default function Search(): React.JSX.Element {
 
   React.useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-      event.preventDefault();
+      // event.preventDefault();
       // Перевірка, чи натиснута клавіша Ctrl + K
       if (event.ctrlKey && event.key === 'k') {
         // Зміна стану для фокусування елементу Input

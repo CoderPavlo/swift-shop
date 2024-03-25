@@ -1,6 +1,5 @@
 import { Rating, Stack, Typography } from '@mui/material'
 import React from 'react'
-import StoreLink from '../../general/components/links/StoreLink'
 import StoreInfo from '../../general/components/links/StoreInfo'
 import Goods from '../../buyer/HomePage/components/Goods'
 
@@ -20,3 +19,4 @@ export default function HomePage() {
         </>
     )
 }
+//видалити, додати вкладку клієнти

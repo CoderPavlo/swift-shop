@@ -5,91 +5,95 @@ import { Link } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
 import { AddShoppingCart, Delete, Edit } from '@mui/icons-material'
 
-interface IInterimCardProps {
-    good: IGoods,
-    children?: React.ReactNode,
-
-}
-const InterimCard = ({ good, children }: IInterimCardProps) => {
-    const theme = useTheme();
-
-    return (
-        <Card
-            sx={{
-                background: 'transparent',
-                position: 'relative',
-                '&:hover': {
-                    background: theme.palette.background.paper
-                }
-            }}
-        >
-            {good.discount !== 0 &&
-                <Typography variant='subtitle2' color='error' sx={{ marginLeft: '85%', marginTop: '8px' }} position='absolute'>
-                    -{good.discount}%
-                </Typography>
-            }
-            <CardMedia
-                sx={{ width: '100%', aspectRatio: '1', marginTop: 0 }}
-                image={good.image}
-                title={good.name}
-            >
-            </CardMedia>
-            <CardContent>
-                <Typography variant='h6' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {good.name}
-                </Typography>
-                {children}
-            </CardContent>
-        </Card>
-    )
-}
-
-
-
 interface IGoodCardProps {
-    type: 'buyer' | 'seller',
+    type: 'view' | 'edit' | 'order',
     good: IGoods,
 
 }
 
 export default function GoodCard({ type, good }: IGoodCardProps) {
-    return (
-        <Grid item xs={6} sm={4} md={3} xl={2.4}>
-            {type === 'buyer' ?
-                <Link to={`/goods/${good.id}`} style={{ textDecoration: 'none' }}>
-                    <InterimCard good={good}>
-                        <Stack display="flex" flexDirection="row" justifyContent="space-between">
-                            <Stack>
-                                <Rating value={good.score} readOnly size="small" precision={0.1} />
+    const theme = useTheme();
 
-                                <Typography variant='h5' sx={{ overflow: 'hidden', mt: 1 }}>
+    return (
+        <Grid item xs={6} sm={4} md={2} {...(type !== 'order' && { xs: 6, md: 3, sm: 4, xl: 2.4 })}>
+            <Link to={`/goods/${good.id}`} style={{ textDecoration: 'none' }}>
+                <Card
+                    sx={{
+                        background: 'transparent',
+                        position: 'relative',
+                        '&:hover': {
+                            background: theme.palette.background.paper
+                        }
+                    }}
+                >
+                    {good.discount !== 0 &&
+                        <Typography variant='subtitle2' color='error' sx={{ marginLeft: '85%', marginTop: '8px' }} position='absolute'>
+                            -{good.discount}%
+                        </Typography>
+                    }
+                    <CardMedia
+                        sx={{ width: '100%', aspectRatio: '1', marginTop: 0 }}
+                        image={good.image}
+                        title={good.name}
+                    >
+                    </CardMedia>
+                    <CardContent>
+                        <Typography variant='h6' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {good.name}
+                        </Typography>
+                        {type === 'view' &&
+                            <Stack display="flex" flexDirection="row" justifyContent="space-between">
+                                <Stack>
+                                    <Rating value={good.score} readOnly size="small" precision={0.1} />
+
+                                    <Typography variant='h5' sx={{ overflow: 'hidden', mt: 1 }}>
+                                        $&#160;{good.price}
+                                    </Typography>
+
+                                </Stack>
+                                <Tooltip title="Додати до корзини">
+                                    <IconButton color="primary" size='large' onClick={(e) => e.preventDefault()}>
+                                        <AddShoppingCart />
+                                    </IconButton>
+                                </Tooltip>
+                            </Stack>
+
+                        }
+                        {type === 'edit' &&
+                            <>
+                                <Typography variant='h5'>
                                     $&#160;{good.price}
                                 </Typography>
+                                <Stack direction={{ xs: 'column', md: 'row' }} mt={1} display='flex' justifyContent='space-evenly'>
+                                    <Button variant='outlined' color='info' startIcon={<Edit />}>
+                                        Змінити
+                                    </Button>
+                                    <Button variant='outlined' color='error' sx={{ marginLeft: { md: 1 }, mt: { xs: 1, md: 0 } }} startIcon={<Delete />}>
+                                        Видалити
+                                    </Button>
+                                </Stack>
+                            </>
 
-                            </Stack>
-                            <Tooltip title="Додати до корзини">
-                                <IconButton color="primary" size='large' onClick={(e) => e.preventDefault()}>
-                                    <AddShoppingCart />
-                                </IconButton>
-                            </Tooltip>
-                        </Stack>
-                    </InterimCard>
-                </Link>
-                :
-                <InterimCard good={good}>
-                    <Typography variant='h5'>
-                        $&#160;{good.price}
-                    </Typography>
-                    <Stack direction={{ xs: 'column', md: 'row' }} mt={1} display='flex' justifyContent='space-evenly'>
-                        <Button variant='outlined' color='info' startIcon={<Edit />}>
-                            Змінити
-                        </Button>
-                        <Button variant='outlined' color='error' sx={{ marginLeft: { md: 1 }, mt: { xs: 1, md: 0 } }} startIcon={<Delete />}>
-                            Видалити
-                        </Button>
-                    </Stack>
-                </InterimCard>
-            }
-        </Grid>
+                        }
+                        {type === 'order' &&
+                            <>
+                                <Typography variant='body2' color='secondary' marginBlock={1}>
+                                    Специфікація
+                                </Typography>
+                                <Stack direction='row'>
+                                    <Typography variant='body1' color='text'>
+                                        {'$ ' + good.price}
+                                    </Typography>
+                                    <Typography variant='body1' color='secondary' ml={2}>
+                                        {'x' + '2'}
+                                    </Typography>
+                                </Stack>
+                            </>
+
+                        }
+                    </CardContent>
+                </Card>
+            </Link>
+        </Grid >
     )
 }

@@ -6,6 +6,7 @@ import { useTheme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 import { alpha } from '@mui/material/styles';
 import { orders } from '../../db/order/order';
+import OrdersList from '../../general/components/orders/OrdersList';
 interface IStat {
   Icon: OverridableComponent<SvgIconTypeMap<{}, "svg">> & { muiName: string; },
   label: string,
@@ -263,7 +264,8 @@ export default function DashboardPage() {
               {item.shop}
               <NavigateNext />
             </Typography>
-            <Grid container>
+            <OrdersList type='buyer' goods={item.goods} total={item.total} status={item.status}/>
+            {/* <Grid container>
               <Grid item xs={12} sm={8} container display='flex' alignItems='center'>
                 {item.goods.length === 1 ?
                   <>
@@ -328,7 +330,7 @@ export default function DashboardPage() {
                   </Button>
                 </Stack>
               </Grid>
-            </Grid>
+            </Grid> */}
           </Box>
         )}
       </Grid>
