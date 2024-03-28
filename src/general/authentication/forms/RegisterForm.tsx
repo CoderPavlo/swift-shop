@@ -16,10 +16,16 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 import NewPasswordInput from '../../components/Inputs/NewPasswordInput';
 import { ESteps } from '../components/RegisterStepper';
+import { IBuyerData } from './RegisterFormBuyer';
+import { ISellerData } from './RegisterFormSeller';
+import { IAvatarData } from '../../components/AvatarLoad/AvatarLoad';
+import { ERole } from '../RegisterPage';
 
 interface IRegisterFormProps {
-  data: IAuthData,
-  setData: React.Dispatch<React.SetStateAction<IAuthData>>,
+  personalDataBuyer: IBuyerData,
+  personalDataSeller: ISellerData,
+  avatarData: IAvatarData,
+  role: ERole,
   setActiveStep: React.Dispatch<React.SetStateAction<ESteps>>,
 }
 
@@ -29,19 +35,21 @@ export interface IAuthData {
   submit: string | null,
 }
 
-export default function RegisterForm({ data, setData, setActiveStep }: IRegisterFormProps): React.JSX.Element {
+export default function RegisterForm({ personalDataBuyer, personalDataSeller, avatarData, role, setActiveStep }: IRegisterFormProps): React.JSX.Element {
   const { t } = useTranslation();
   return (
     <Formik
-      initialValues={data}
+      initialValues={{
+        email: '',
+        password: '',
+        submit: '',
+      }}
       validationSchema={Yup.object().shape({
         email: Yup.string().email(t('email.valid')).max(255, t('incorrect-entry')).required(t('required-field')),
         password: Yup.string().max(255, t('incorrect-entry')).required(t('required-field'))
       })}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         try {
-          setData(values);
-          setActiveStep(ESteps.EMAIL_CONFIRM);
           setStatus({ success: false });
           setSubmitting(false);
         } catch (err: any) {
@@ -100,13 +108,13 @@ export default function RegisterForm({ data, setData, setActiveStep }: IRegister
             )}
             <Grid container item xs={12} spacing={2}>
               <Grid item xs={12} md={6}>
-                <Button onClick={() => setActiveStep(ESteps.PERSONAL_DATA)} disableElevation fullWidth size="large" type="button" variant="outlined" color="primary">
+                <Button onClick={() => setActiveStep(ESteps.AVATAR)} disableElevation fullWidth size="large" type="button" variant="outlined" color="primary">
                   {t('back')}
                 </Button>
               </Grid>
               <Grid item xs={12} md={6}>
                 <Button disableElevation fullWidth size="large" type="submit" variant="contained" color="primary">
-                  {t('continue')}
+                  Зареєструватися
                 </Button>
               </Grid>
             </Grid>

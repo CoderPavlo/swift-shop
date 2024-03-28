@@ -7,10 +7,10 @@ import Check from '@mui/icons-material/Check';
 import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
 import { StepIconProps } from '@mui/material/StepIcon';
 import RegisterFormBuyer, { IBuyerData } from '../forms/RegisterFormBuyer';
-import RegisterForm, { IAuthData } from '../forms/RegisterForm';
-import EmailConfirmForm, { IConfirmEmailData } from '../forms/EmailConfirmForm';
+import RegisterForm from '../forms/RegisterForm';
 import { ERole } from '../RegisterPage';
 import RegisterFormSeller, { ISellerData } from '../forms/RegisterFormSeller';
+import AvatarLoad, { IAvatarData } from '../../components/AvatarLoad/AvatarLoad';
 
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
     [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -62,22 +62,22 @@ function QontoStepIcon(props: StepIconProps) {
     const { active, completed, className } = props;
     return (
         <QontoStepIconRoot ownerState={{ active }} className={className}>
-            {completed ? <Check className="QontoStepIcon-completedIcon" /> : <div className="QontoStepIcon-circle" /> }
+            {completed ? <Check className="QontoStepIcon-completedIcon" /> : <div className="QontoStepIcon-circle" />}
         </QontoStepIconRoot>
     );
 }
 
 export enum ESteps {
     PERSONAL_DATA,
+    AVATAR,
     AUTH_DATA,
-    EMAIL_CONFIRM,
 }
 interface IRegisterStepperProps {
     role: ERole
 }
 export default function RegisterStepper({ role }: IRegisterStepperProps): React.JSX.Element {
     const { t } = useTranslation();
-    const steps = [t('register.entry_data'), t('register.create_pswd'), t('register.confirm_email')];
+    const steps = [t('register.entry_data'), 'Завантаження аватару', t('register.create_pswd')];
 
     const [activeStep, setActiveStep] = React.useState<ESteps>(ESteps.PERSONAL_DATA);
     const date = new Date();
@@ -101,16 +101,15 @@ export default function RegisterStepper({ role }: IRegisterStepperProps): React.
         adress: ''
     })
 
-    const [authData, setAuthData] = React.useState<IAuthData>({
-        email: '',
-        password: '',
-        submit: null
-    })
+    const [avatarData, setAvatarData] = React.useState<IAvatarData>({
+        crop: { x: 0, y: 0 },
+        zoom: 1,
+    });
 
-    const [confirmEmailData, setConfirmEmailData] = React.useState<IConfirmEmailData>({
-        code: '',
-        sucess: null,
-    })
+    // const [confirmEmailData, setConfirmEmailData] = React.useState<IConfirmEmailData>({
+    //     code: '',
+    //     sucess: null,
+    // })
 
 
     return (
@@ -138,14 +137,24 @@ export default function RegisterStepper({ role }: IRegisterStepperProps): React.
                     />
                 )
             }
+            {activeStep === ESteps.AVATAR &&
+                <AvatarLoad
+                    data={avatarData}
+                    setData={setAvatarData}
+                    setActiveStep={setActiveStep}
+                />
+
+            }
             {activeStep === ESteps.AUTH_DATA &&
                 <RegisterForm
-                    data={authData}
-                    setData={setAuthData}
+                    personalDataBuyer={personalDataBuyer}
+                    personalDataSeller={personalDataSeller}
+                    avatarData={avatarData}
+                    role={role}
                     setActiveStep={setActiveStep}
                 />
             }
-            {activeStep === ESteps.EMAIL_CONFIRM &&
+            {/* {activeStep === ESteps.EMAIL_CONFIRM &&
                 <EmailConfirmForm
                     data={confirmEmailData}
                     setData={setConfirmEmailData}
@@ -155,7 +164,7 @@ export default function RegisterStepper({ role }: IRegisterStepperProps): React.
                     role={role}
                     authData={authData}
                 />
-            }
+            } */}
         </>
     )
 }

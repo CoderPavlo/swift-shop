@@ -36,7 +36,7 @@ export default function RegisterFormBuyer({ data, setData, setActiveStep }: IReg
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         console.log(values);
         setData(values);
-        setActiveStep(ESteps.AUTH_DATA)
+        setActiveStep(ESteps.AVATAR)
         setStatus({ success: true });
         setSubmitting(true);
       }}
