@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class SwiftshopConfig(AppConfig):
+class Auth_APIConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'swiftshop'
+    name = 'auth_api'
