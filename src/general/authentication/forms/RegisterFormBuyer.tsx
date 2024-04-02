@@ -48,9 +48,9 @@ export default function RegisterFormBuyer({ data, setData, setActiveStep }: IReg
     t('months.december')
   ];
   const genders = [
+    t('genders.not-selected'),
     t('genders.male'),
-    t('genders.female'),
-    t('genders.not-selected')
+    t('genders.female')
   ]
   return (
     <Formik
@@ -63,12 +63,9 @@ export default function RegisterFormBuyer({ data, setData, setActiveStep }: IReg
         year: Yup.number().min(year - 100, t('incorrect-entry')).max(year, t('incorrect-entry')).required(t('required-field')),
         gender: Yup.number().required(t('required-field')),
       })}
-      onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-        console.log(values);
+      onSubmit={async (values) => {
         setData(values);
         setActiveStep(ESteps.AVATAR)
-        setStatus({ success: true });
-        setSubmitting(true);
       }}
     >
       {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (

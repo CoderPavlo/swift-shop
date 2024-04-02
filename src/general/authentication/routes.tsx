@@ -1,7 +1,8 @@
 import { IRoute } from "../../App";
+import { ERole } from "../../models/IUser";
 import AuthPage from "./components/AuthPage";
 import LoginPage from "./LoginPage";
-import RegisterPage, { RegisterCard, ERole } from "./RegisterPage";
+import RegisterPage, { RegisterCard } from "./RegisterPage";
 
 export const routes: IRoute[] = [
     {

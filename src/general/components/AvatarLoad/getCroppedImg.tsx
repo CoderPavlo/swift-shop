@@ -9,16 +9,56 @@ export const createImage = (url: string): Promise<HTMLImageElement> =>
         image.src = url;
     });
 
+// export default async function getCroppedImg(
+//     imageSrc: string,
+//     pixelCrop: Area,
+// ): Promise<string | null> {
+//     const image = await createImage(imageSrc);
+//     const canvas = document.createElement("canvas");
+//     const ctx = canvas.getContext("2d");
+
+//     if (!ctx) {
+//         return null;
+//     }
+
+//     canvas.width = image.width;
+//     canvas.height = image.height;
+
+//     ctx.translate(image.width / 2, image.height / 2);
+//     ctx.translate(-image.width / 2, -image.height / 2);
+
+//     ctx.drawImage(image, 0, 0);
+
+//     const data = ctx.getImageData(
+//         pixelCrop.x,
+//         pixelCrop.y,
+//         pixelCrop.width,
+//         pixelCrop.height
+//     );
+
+//     canvas.width = pixelCrop.width;
+//     canvas.height = pixelCrop.height;
+
+//     ctx.putImageData(data, 0, 0);
+
+//     return new Promise<string | null>((resolve, reject) => {
+//         canvas.toBlob((file) => {
+//             resolve(file ? URL.createObjectURL(file) : null);
+//         }, "image/jpeg");
+//     });
+// }
+
 export default async function getCroppedImg(
-    imageSrc: string,
-    pixelCrop: Area,
-): Promise<string | null> {
+    imageSrc?: string,
+    pixelCrop?: Area
+): Promise<File | undefined> {
+    if(!imageSrc || !pixelCrop) return undefined;
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
-
+    
     if (!ctx) {
-        return null;
+        return undefined;
     }
 
     canvas.width = image.width;
@@ -41,9 +81,14 @@ export default async function getCroppedImg(
 
     ctx.putImageData(data, 0, 0);
 
-    return new Promise<string | null>((resolve, reject) => {
-        canvas.toBlob((file) => {
-            resolve(file ? URL.createObjectURL(file) : null);
+    return new Promise<File | undefined>((resolve, reject) => {
+        canvas.toBlob((blob) => {
+            if (blob) {
+                const file = new File([blob], "avatar.jpg", { type: "image/jpeg" });
+                resolve(file);
+            } else {
+                resolve(undefined);
+            }
         }, "image/jpeg");
     });
 }

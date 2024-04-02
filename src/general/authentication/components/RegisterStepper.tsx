@@ -8,9 +8,9 @@ import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector
 import { StepIconProps } from '@mui/material/StepIcon';
 import RegisterFormBuyer, { IBuyerData } from '../forms/RegisterFormBuyer';
 import RegisterForm from '../forms/RegisterForm';
-import { ERole } from '../RegisterPage';
 import RegisterFormSeller, { ISellerData } from '../forms/RegisterFormSeller';
 import AvatarLoad, { IAvatarData } from '../../components/AvatarLoad/AvatarLoad';
+import { ERole } from '../../../models/IUser';
 
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
     [`&.${stepConnectorClasses.alternativeLabel}`]: {

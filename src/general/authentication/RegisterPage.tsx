@@ -11,11 +11,7 @@ import { Outlet } from "react-router-dom";
 import AuthCard from './components/AuthCard';
 import AuthHeader from './components/AuthHeader';
 import RegisterStepper from './components/RegisterStepper';
-export enum ERole {
-  BUYER,
-  SELLER,
-  ADMIN,
-}
+import { ERole } from '../../models/IUser';
 
 export function RegisterCard({ role }: { role: ERole }): React.JSX.Element {
   const { t } = useTranslation();
@@ -43,22 +39,25 @@ export default function RegisterPage(): React.JSX.Element {
         TabIndicatorProps={{
           sx: { bgcolor: "transparent", }
         }}
-        onChange={(e, newValue) => {setRole(newValue); navigate(newValue === 0 ? '/register':'/register/shop' );}}>
+        onChange={(e, newValue) => {setRole(newValue); navigate(newValue === 'buyer' ? '/register':'/register/shop' );}}>
         <Tab label={t('register.client')}
           sx={{
-            background: role === 0 ? theme.palette.background.paper : 'transparent',
+            background: role === ERole.BUYER ? theme.palette.background.paper : 'transparent',
             borderTopLeftRadius: 10,
             borderTopRightRadius: 10,
             width: '50%',
           }}
+          value={ERole.BUYER}
         />
         <Tab label={t('register.shop')}
           sx={{
-            background: role === 1 ? theme.palette.background.paper : 'transparent',
+            background: role === ERole.SELLER ? theme.palette.background.paper : 'transparent',
             borderTopLeftRadius: 10,
             borderTopRightRadius: 10,
             width: '50%',
-          }} />
+          }} 
+          value={ERole.SELLER}
+          />
       </Tabs>
       <Outlet/>
       </>

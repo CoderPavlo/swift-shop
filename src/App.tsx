@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { routes as buyerRoutes } from './buyer/routes';
 import { routes as sellerRoutes } from './seller/routes';
 import { routes as authRoutes } from './general/authentication/routes';
+import { useAppSelector } from './store/hooks';
+import { ERole } from './models/IUser';
 
 export interface IRoute {
   path: string,
@@ -26,6 +28,7 @@ const renderRoutes = (nestedRoutes: IRoute[]) =>
   ));
 
 function App() {
+  const {role} = useAppSelector(state =>state.authReducer);
 
   return (
     <ThemeModeProvider>
@@ -33,9 +36,9 @@ function App() {
         <BrowserRouter>
           <Routes>
 
-            {/* {renderRoutes(buyerRoutes)} */}
+            {role===ERole.BUYER && renderRoutes(buyerRoutes)}
 
-            {renderRoutes(sellerRoutes)}
+            {role===ERole.SELLER && renderRoutes(sellerRoutes)}
 
             {renderRoutes(authRoutes)}
 

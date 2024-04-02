@@ -1,16 +1,17 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
+import LoadingButton from '@mui/lab/LoadingButton';
 import {
   Button,
-  FormHelperText,
   Grid,
   Link,
   Typography,
   TextField,
 
 } from '@mui/material';
+import LoginIcon from '@mui/icons-material/Login';
 
 import * as Yup from 'yup';
 import { Formik } from 'formik';
@@ -19,7 +20,12 @@ import { ESteps } from '../components/RegisterStepper';
 import { IBuyerData } from './RegisterFormBuyer';
 import { ISellerData } from './RegisterFormSeller';
 import { IAvatarData } from '../../components/AvatarLoad/AvatarLoad';
-import { ERole } from '../RegisterPage';
+import { authAPI } from '../../../store/services/authAPI';
+import { ERole, IAuth } from '../../../models/IUser';
+import getCroppedImg from '../../components/AvatarLoad/getCroppedImg';
+import { authSlice } from '../../../store/reducers/authSlice';
+import { useAppDispatch } from '../../../store/hooks';
+import Cookies from 'js-cookie';
 
 interface IRegisterFormProps {
   personalDataBuyer: IBuyerData,
@@ -37,30 +43,66 @@ export interface IAuthData {
 
 export default function RegisterForm({ personalDataBuyer, personalDataSeller, avatarData, role, setActiveStep }: IRegisterFormProps): React.JSX.Element {
   const { t } = useTranslation();
+  const [register, { isLoading }] = authAPI.useRegisterMutation();
+  const { setTokens } = authSlice.actions
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  if (Cookies.get('refreshToken') && Cookies.get('accessToken'))
+    navigate('/');
+
   return (
     <Formik
       initialValues={{
         email: '',
         password: '',
-        submit: '',
       }}
       validationSchema={Yup.object().shape({
         email: Yup.string().email(t('email.valid')).max(255, t('incorrect-entry')).required(t('required-field')),
         password: Yup.string().max(255, t('incorrect-entry')).required(t('required-field'))
       })}
-      onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-        try {
-          setStatus({ success: false });
-          setSubmitting(false);
-        } catch (err: any) {
-          console.error(err);
-          setStatus({ success: false });
-          setErrors({ submit: err.message });
-          setSubmitting(false);
-        }
+      onSubmit={async (values, { setErrors, setTouched }) => {
+        const avatar = await getCroppedImg(avatarData.loadImage, avatarData.croppedAreaPixels);
+        await register({
+          email: values.email,
+          password: values.password,
+          role: role,
+          buyer: role === ERole.BUYER ? {
+            first_name: personalDataBuyer.firstname,
+            last_name: personalDataBuyer.lastname,
+            day: personalDataBuyer.day,
+            month: personalDataBuyer.month,
+            year: personalDataBuyer.year,
+            gender: personalDataBuyer.gender,
+          } : undefined,
+          seller: role === ERole.SELLER ? {
+            name: personalDataSeller.company,
+            phone: personalDataSeller.phone_number,
+            adress: personalDataSeller.adress,
+          } : undefined,
+          avatar: avatar,
+        }).unwrap()
+          .then((payload: IAuth) => {
+            dispatch(setTokens({
+              access_token: payload.access_token,
+              refresh_token: payload.refresh_token,
+              role: role
+            }));
+            navigate('/');
+          })
+          .catch(async (error) => {
+            if ('data' in error) {
+              await setTouched({ email: true });
+              setErrors({ email: (error.data as { message: string }).message });
+            }
+            else {
+              await setTouched({ password: true, email: true })
+              setErrors({ email: 'Щось пішло не так', password: ' ' });
+            }
+          })
       }}
     >
-      {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+      {({ errors, handleBlur, handleChange, handleSubmit, values, touched }) => (
         <form noValidate onSubmit={handleSubmit}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
@@ -101,21 +143,20 @@ export default function RegisterForm({ personalDataBuyer, personalDataSeller, av
                 </Link>
               </Typography>
             </Grid>
-            {errors.submit && (
-              <Grid item xs={12}>
-                <FormHelperText error>{errors.submit}</FormHelperText>
-              </Grid>
-            )}
             <Grid container item xs={12} spacing={2}>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={5}>
                 <Button onClick={() => setActiveStep(ESteps.AVATAR)} disableElevation fullWidth size="large" type="button" variant="outlined" color="primary">
                   {t('back')}
                 </Button>
               </Grid>
-              <Grid item xs={12} md={6}>
-                <Button disableElevation fullWidth size="large" type="submit" variant="contained" color="primary">
+              <Grid item xs={12} md={7}>
+                <LoadingButton
+                  loading={isLoading}
+                  loadingPosition="start"
+                  startIcon={<LoginIcon />}
+                  disableElevation fullWidth size="large" type="submit" variant="contained" color="primary">
                   Зареєструватися
-                </Button>
+                </LoadingButton>
               </Grid>
             </Grid>
 

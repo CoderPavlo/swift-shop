@@ -33,12 +33,9 @@ export default function RegisterFormBuyer({ data, setData, setActiveStep }: IReg
         phone_number: Yup.string().max(255, t('incorrect-entry')).required(t('required-field')),
         adress: Yup.string().max(255, t('incorrect-entry')).required(t('required-field')),
       })}
-      onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-        console.log(values);
+      onSubmit={async (values) => {
         setData(values);
         setActiveStep(ESteps.AVATAR)
-        setStatus({ success: true });
-        setSubmitting(true);
       }}
     >
       {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (

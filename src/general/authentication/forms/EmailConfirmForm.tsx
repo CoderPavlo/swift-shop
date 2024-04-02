@@ -13,7 +13,7 @@ import { ESteps } from '../components/RegisterStepper';
 import { IBuyerData } from './RegisterFormBuyer';
 import { IAuthData } from './RegisterForm';
 import { ISellerData } from './RegisterFormSeller';
-import { ERole } from '../RegisterPage';
+import { ERole } from '../../../models/IUser';
 
 interface IEmailConfirmFormProps {
     data: IConfirmEmailData,
