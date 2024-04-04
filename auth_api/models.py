@@ -26,6 +26,7 @@ class UserManager(BaseUserManager):
             role='admin',
         )
         user.is_superuser = True
+        user.is_staff = True
         user.save(using=self._db)
         return user
 
@@ -38,7 +39,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         ('seller', 'Seller'),
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
-
+    is_staff = models.BooleanField(default=False)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
