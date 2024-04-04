@@ -1,20 +1,22 @@
 import React from 'react'
 
 
-import { Typography, Stack, Card, IconButton, CardContent, Skeleton, Grid } from '@mui/material';
+import { Typography, Stack, Card, IconButton, CardContent} from '@mui/material';
 import { Link } from 'react-router-dom';
 
 import { CustomArrowProps, default as Slider, Settings as ISettings } from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import { getRandomCategories } from '../../../db/categories/categories';
-
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { SxProps } from '@mui/system';
 import { NavigateNext, NavigateBefore } from '@mui/icons-material';
+import { categoriesAPI } from '../../../store/services/categoriesAPI';
+import { baseUrl } from '../../../store/services/baseUrl';
+import CategoriesSceleton from '../skeletons/CategoriesSkeleton';
+import { useTranslation } from 'react-i18next';
 
 
 const arrowSx: SxProps = {
@@ -94,44 +96,57 @@ export default function CategoriesBlock(): React.JSX.Element {
     initialSlide: 0,
   };
 
-  const categories = getRandomCategories(10);
+  const { data: categories, error, isLoading } = categoriesAPI.useFetchSubCategoriesQuery();
+  const {t} = useTranslation();
+
   return (
     <>
-      <Stack display='flex' justifyContent="space-between" flexDirection="row" paddingBlock={2}>
-        <Typography variant="subtitle1" color="primary" textTransform='uppercase'>
-          Категорії
-        </Typography>
-        <Typography variant='subtitle1' component={Link} to="/categories" color="secondary">
-          Всі
-        </Typography>
-      </Stack>
-      <div style={{ marginInline: '25px' }}>
-        <Slider {...settings}>
-          {categories.map(category =>
-            <div key={category.id}>
-              <Link to={`/categories/${category.id}`} style={{ textDecoration: 'none' }}>
-                <Card sx={{
-                  borderRadius: '10px', background: 'transparent', marginInline: '10px',
-                  '&:hover': {
-                    marginInline: '5px',
-                  }
-                }}>
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    style={{ width: '100%' }}
-                  />
-                  <CardContent sx={{ display: 'flex', justifyContent: 'center', height: '92px' }}>
-                    <Typography variant="subtitle2" textAlign="center">
-                      {category.name}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Link>
-            </div>
-          )}
-        </Slider>
-      </div>
+      {isLoading ? <CategoriesSceleton /> :
+        error ? 
+          <Stack height='200px' display='flex' justifyContent='center' alignItems='center'>
+            <Typography variant='h6' color='error'>
+                Сталася помилка при загрузці
+            </Typography>
+          </Stack>
+        :
+        <>
+          <Stack display='flex' justifyContent="space-between" flexDirection="row" paddingBlock={2}>
+            <Typography variant="subtitle1" color="primary" textTransform='uppercase'>
+              Категорії
+            </Typography>
+            <Typography variant='subtitle1' component={Link} to="/categories" color="secondary">
+              Всі
+            </Typography>
+          </Stack>
+          <div style={{ marginInline: '25px' }}>
+            <Slider {...settings}>
+              {categories?.map(category =>
+                <div key={category.id}>
+                  <Link to={`/subcategories/${category.id}`} style={{ textDecoration: 'none' }}>
+                    <Card sx={{
+                      borderRadius: '10px', background: 'transparent', marginInline: '10px',
+                      '&:hover': {
+                        marginInline: '5px',
+                      }
+                    }}>
+                      <img
+                        src={baseUrl + category.image}
+                        alt={category.name}
+                        style={{ width: '100%' }}
+                      />
+                      <CardContent sx={{ display: 'flex', justifyContent: 'center', height: '92px' }}>
+                        <Typography variant="subtitle2" textAlign="center">
+                          {t(category.name)}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </div>
+              )}
+            </Slider>
+          </div>
+        </>
+      }
     </>
   )
 }
