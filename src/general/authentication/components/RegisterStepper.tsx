@@ -9,7 +9,7 @@ import { StepIconProps } from '@mui/material/StepIcon';
 import RegisterFormBuyer, { IBuyerData } from '../forms/RegisterFormBuyer';
 import RegisterForm from '../forms/RegisterForm';
 import RegisterFormSeller, { ISellerData } from '../forms/RegisterFormSeller';
-import AvatarLoad, { IAvatarData } from '../../components/AvatarLoad/AvatarLoad';
+import AvatarLoad, { IAvatarData } from '../../components/ImageLoad/AvatarLoad';
 import { ERole } from '../../../models/IUser';
 
 const QontoConnector = styled(StepConnector)(({ theme }) => ({

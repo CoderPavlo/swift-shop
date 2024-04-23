@@ -3,8 +3,12 @@ import { Button, FormControl, Grid, InputLabel, MenuItem, Select, Stack, TextFie
 import React from 'react'
 import { goods } from '../../db/goods/goods';
 import GoodCard from '../../general/components/cards/GoodCard';
+import GoodDialog from './components/GoodDialog';
 
 export default function GoodsPage() {
+
+    const [openDialog, setOpenDialog] = React.useState<boolean>(true);
+
     return (
         <>
             <Stack display='flex' justifyContent="space-between" flexDirection="row" paddingBlock={2} alignItems='center'>
@@ -46,6 +50,7 @@ export default function GoodsPage() {
                     <GoodCard key={index} type='edit' good={good}/>
                 )}
             </Grid>
+            <GoodDialog open={openDialog} handleClose={()=>setOpenDialog(false)} type='add'/>
         </>
     )
 }

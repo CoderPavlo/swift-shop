@@ -5,8 +5,6 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import LoadingButton from '@mui/lab/LoadingButton';
 import LoginIcon from '@mui/icons-material/Login';
 import {
-  Button,
-  FormHelperText,
   Grid,
   Link,
   Stack,
@@ -30,7 +28,7 @@ function LoginForm(): React.JSX.Element {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  if (Cookies.get('refreshToken') && Cookies.get('accessToken'))
+  if (Cookies.get('refreshToken'))
     navigate('/');
 
 

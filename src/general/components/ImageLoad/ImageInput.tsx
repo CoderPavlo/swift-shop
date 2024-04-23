@@ -10,9 +10,11 @@ import { useTheme } from '@mui/material/styles';
 interface IImageInputProps {
     image?: string, 
     setImage: (value: string)=>void,
+    width?: string,
+    height?: string,
 }
 
-const ImageInput = ({ image, setImage}: IImageInputProps) => {
+const ImageInput = ({ image, setImage, width='100%', height}: IImageInputProps) => {
     const theme = useTheme();
     const {
         getRootProps,
@@ -53,7 +55,9 @@ const ImageInput = ({ image, setImage}: IImageInputProps) => {
             backgroundColor: theme.palette.background.default,
             color: image? theme.palette.text.primary : theme.palette.secondary.main,
             outline: 'none',
-            transition: 'border .24s ease-in-out'
+            transition: 'border .24s ease-in-out',
+            height: height,
+            justifyContent: 'center'
         };
 
         const focusedStyle : React.CSSProperties = {
@@ -74,14 +78,14 @@ const ImageInput = ({ image, setImage}: IImageInputProps) => {
             ...(isDragAccept ? acceptStyle : {}),
             ...(isDragReject ? rejectStyle : {})
         };
-    }, [isFocused, isDragAccept, isDragReject, theme, image]);
+    }, [isFocused, isDragAccept, isDragReject, theme, image, height]);
 
     return (
-        <Paper elevation={3} style={{width:'100%'}}>
+        <Paper elevation={3} style={{width: width, height: height}}>
             <div {...getRootProps({ style })}>
                 <input {...getInputProps()} />
-                <Typography variant="body1">
-                    {"Перетягніть файли сюди або натисніть, щоб вибрати файли"}
+                <Typography variant="body1" textAlign='center'>
+                    {"Виберіть зображення"}
                 </Typography>
             </div>
         </Paper>

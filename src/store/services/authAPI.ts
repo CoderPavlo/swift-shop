@@ -47,7 +47,7 @@ export const authAPI = createApi({
                 method: 'POST',
                 body: user
             })
-        })
+        }),
 
     })
 })

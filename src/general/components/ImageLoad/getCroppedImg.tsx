@@ -84,11 +84,11 @@ export default async function getCroppedImg(
     return new Promise<File | undefined>((resolve, reject) => {
         canvas.toBlob((blob) => {
             if (blob) {
-                const file = new File([blob], "avatar.jpg", { type: "image/jpeg" });
+                const file = new File([blob], "image.png", { type: "image/png" });
                 resolve(file);
             } else {
                 resolve(undefined);
             }
-        }, "image/jpeg");
+        }, "image/png");
     });
 }
