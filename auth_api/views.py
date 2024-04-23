@@ -7,6 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from auth_api.models import User
 from .serializers import LoginSerializer, RefreshTokenSerializer, UserSerializer
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.exceptions import AuthenticationFailed
 
 class RegistrationAPIView(APIView):
     parser_classes = (MultiPartParser, FormParser)
