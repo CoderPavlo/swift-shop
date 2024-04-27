@@ -1,4 +1,5 @@
-import { IGoods } from "../goods/goods";
+
+import { IGoods } from '../../models/IGood'
 import briefcase from '../goods/images/briefcase.png'
 import canon_camera from '../goods/images/canon_camera.png'
 import cofee_machine from '../goods/images/cofee_machine.png'
@@ -28,46 +29,46 @@ export interface IOrder {
 }
 //Додати кількість до товару
 export const orders: IOrder[] = [
-    { id: 1, shop: "ЕлектроСвіт", shopId: 0, status: 0, total: 200, date: new Date(), goods: [
-        { id: 4, name: 'Кавоварка', score: 4.8, price: 79.99, discount: 2, image: cofee_machine },
-        { id: 22, name: 'Гітара', score: 4.8, price: 199.99, discount: 2, image: guitar },
-    ] },
-    { id: 2, shop: "ГаджетПлаза", shopId: 0, status: 1, total: 200, date: new Date(), goods: [
-        { id: 2, name: 'Ноутбук HP', score: 4.2, price: 899.99, discount: 15, image: laptop },
-    ] },
-    { id: 3, shop: "МегаТехніка", shopId: 0, status: 2, total: 200, date: new Date(), goods: [
-        { id: 36, name: 'Пилосос', score: 4.3, price: 149.99, discount: 15, image: vacuum_cleaner },
-        { id: 16, name: 'Молоток', score: 4.7, price: 5.99, discount: 5, image: hammer },
+    // { id: 1, shop: "ЕлектроСвіт", shopId: 0, status: 0, total: 200, date: new Date(), goods: [
+    //     { id: 4, name: 'Кавоварка', rating: 4.8, price: 79.99, discount: 2, image: cofee_machine },
+    //     { id: 22, name: 'Гітара', rating: 4.8, price: 199.99, discount: 2, image: guitar },
+    // ] },
+    // { id: 2, shop: "ГаджетПлаза", shopId: 0, status: 1, total: 200, date: new Date(), goods: [
+    //     { id: 2, name: 'Ноутбук HP', rating: 4.2, price: 899.99, discount: 15, image: laptop },
+    // ] },
+    // { id: 3, shop: "МегаТехніка", shopId: 0, status: 2, total: 200, date: new Date(), goods: [
+    //     { id: 36, name: 'Пилосос', rating: 4.3, price: 149.99, discount: 15, image: vacuum_cleaner },
+    //     { id: 16, name: 'Молоток', rating: 4.7, price: 5.99, discount: 5, image: hammer },
 
-    ] },
-    { id: 4, shop: "СуперГаджет", shopId: 0, status: 2, total: 200, date: new Date(), goods: [
-        { id: 29, name: 'Водяний фільтр', score: 4.6, price: 59.99, discount: 15, image: water_filter },
-        { id: 30, name: 'Іграшковий робот', score: 4.4, price: 49.99, discount: 0, image: toy_robot },
-        { id: 31, name: 'Косметичний набір', score: 4.7, price: 29.99, discount: 0, image: cosmetic_set },
-        { id: 4, name: 'Кавоварка', score: 4.8, price: 79.99, discount: 2, image: cofee_machine },
+    // ] },
+    // { id: 4, shop: "СуперГаджет", shopId: 0, status: 2, total: 200, date: new Date(), goods: [
+    //     { id: 29, name: 'Водяний фільтр', rating: 4.6, price: 59.99, discount: 15, image: water_filter },
+    //     { id: 30, name: 'Іграшковий робот', rating: 4.4, price: 49.99, discount: 0, image: toy_robot },
+    //     { id: 31, name: 'Косметичний набір', rating: 4.7, price: 29.99, discount: 0, image: cosmetic_set },
+    //     { id: 4, name: 'Кавоварка', rating: 4.8, price: 79.99, discount: 2, image: cofee_machine },
 
-    ] },
-    { id: 5, shop: "ГіперЕлектроніка", shopId: 0, status: 3, total: 200, date: new Date(), goods: [
-        { id: 45, name: 'Біжутерія', score: 4.5, price: 9.99, discount: 0, image: imitation_jewelry },
-        { id: 46, name: 'Портфель', score: 4.8, price: 39.99, discount: 0, image: briefcase },
+    // ] },
+    // { id: 5, shop: "ГіперЕлектроніка", shopId: 0, status: 3, total: 200, date: new Date(), goods: [
+    //     { id: 45, name: 'Біжутерія', rating: 4.5, price: 9.99, discount: 0, image: imitation_jewelry },
+    //     { id: 46, name: 'Портфель', rating: 4.8, price: 39.99, discount: 0, image: briefcase },
 
-    ] },
-    { id: 6, shop: "ТехноУніверс", shopId: 0, status: 3, total: 200, date: new Date(), goods: [
-        { id: 10, name: 'Смартфон Samsung', score: 4.1, price: 599.99, discount: 2, image: samsung_smartphone },
-    ] },
-    { id: 7, shop: "ФутурТехніка", shopId: 0, status: 3, total: 200, date: new Date(), goods: [
-        { id: 41, name: 'Мультимедійний проектор', score: 4.6, price: 299.99, discount: 0, image: multimedia_projector },
-    ] },
-    { id: 8, shop: "ЕлектроМайстер", shopId: 0, status: 3, total: 200, date: new Date(), goods: [
-        { id: 53, name: 'Фітнес-браслет', score: 4.0, price: 39.99, discount: 5, image: fitness_bracelet },
-        { id: 54, name: 'Кавоварка', score: 4.8, price: 79.99, discount: 2, image: cofee_machine },
-    ] },
-    { id: 9, shop: "ГітеТехнік", shopId: 0, status: 3, total: 200, date: new Date(), goods: [
-        { id: 14, name: 'Фотоапарат Canon', score: 4.8, price: 449.99, discount: 2, image: canon_camera },
-    ] },
-    { id: 10, shop: "ГлобальГаджет", shopId: 0, status: 3, total: 200, date: new Date(), goods: [
-        { id: 38, name: "Комп'ютерний стіл", score: 4.7, price: 89.99, discount: 12, image: computer_desk },
-        { id: 39, name: 'Роликові ковзани', score: 4.8, price: 49.99, discount: 0, image: rollerskates },
-        { id: 40, name: 'Телефонний стілець', score: 4.5, price: 19.99, discount: 0, image: telephone_chair },
-    ] },
+    // ] },
+    // { id: 6, shop: "ТехноУніверс", shopId: 0, status: 3, total: 200, date: new Date(), goods: [
+    //     { id: 10, name: 'Смартфон Samsung', rating: 4.1, price: 599.99, discount: 2, image: samsung_smartphone },
+    // ] },
+    // { id: 7, shop: "ФутурТехніка", shopId: 0, status: 3, total: 200, date: new Date(), goods: [
+    //     { id: 41, name: 'Мультимедійний проектор', rating: 4.6, price: 299.99, discount: 0, image: multimedia_projector },
+    // ] },
+    // { id: 8, shop: "ЕлектроМайстер", shopId: 0, status: 3, total: 200, date: new Date(), goods: [
+    //     { id: 53, name: 'Фітнес-браслет', rating: 4.0, price: 39.99, discount: 5, image: fitness_bracelet },
+    //     { id: 54, name: 'Кавоварка', rating: 4.8, price: 79.99, discount: 2, image: cofee_machine },
+    // ] },
+    // { id: 9, shop: "ГітеТехнік", shopId: 0, status: 3, total: 200, date: new Date(), goods: [
+    //     { id: 14, name: 'Фотоапарат Canon', rating: 4.8, price: 449.99, discount: 2, image: canon_camera },
+    // ] },
+    // { id: 10, shop: "ГлобальГаджет", shopId: 0, status: 3, total: 200, date: new Date(), goods: [
+    //     { id: 38, name: "Комп'ютерний стіл", rating: 4.7, price: 89.99, discount: 12, image: computer_desk },
+    //     { id: 39, name: 'Роликові ковзани', rating: 4.8, price: 49.99, discount: 0, image: rollerskates },
+    //     { id: 40, name: 'Телефонний стілець', rating: 4.5, price: 19.99, discount: 0, image: telephone_chair },
+    // ] },
 ];

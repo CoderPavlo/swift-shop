@@ -1,8 +1,8 @@
 import React from 'react'
-import { IGoods } from '../../../db/goods/goods'
 import { Button, Grid, InputAdornment, Stack, TextField, Typography } from '@mui/material'
 import GoodCard from '../cards/GoodCard'
 import { Message } from '@mui/icons-material';
+import { IGoods } from '../../../models/IGood';
 interface IOrdersListProps {
   goods: IGoods[],
   type: 'buyer' | 'seller',

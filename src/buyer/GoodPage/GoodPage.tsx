@@ -13,7 +13,7 @@ export default function GoodPage() {
                 <Typography variant='h5' color='text' width='100%' textAlign='center'>
                     {goods[0].name}
                 </Typography>
-                <Rating value={goods[0].score} readOnly size="medium" precision={0.1} sx={{ mt: 1 }} />
+                <Rating value={goods[0].rating} readOnly size="medium" precision={0.1} sx={{ mt: 1 }} />
 
                 <Stack direction='row' mt={2}>
 

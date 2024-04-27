@@ -4,6 +4,21 @@ import { IAuth } from '../../models/IUser';
 import axios from 'axios';
 import { baseUrl } from '../services/baseUrl';
 
+
+export const saveTokens = (auth: IAuth) => {
+  // Store tokens in cookies with expiration times
+  const accessExpiration = new Date();
+  accessExpiration.setTime(accessExpiration.getTime() + 15 * 60 * 1000); // 15 minutes
+  Cookies.set('accessToken', auth.access_token, { expires: accessExpiration });
+
+  if(auth.role)
+    Cookies.set('role', auth.role, { expires: accessExpiration });
+
+  const refreshExpiration = new Date();
+  refreshExpiration.setTime(refreshExpiration.getTime() + 24 * 60 * 60 * 1000); // 1 day
+  Cookies.set('refreshToken', auth.refresh_token, { expires: refreshExpiration });
+}
+
 const initialState = {
   role: Cookies.get('role'),
 };
@@ -13,21 +28,10 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     setTokens: (state, action: PayloadAction<IAuth>) => {
-      const { access_token, refresh_token, role } = action.payload;
-
-      // Store tokens in cookies with expiration times
-      const accessExpiration = new Date();
-      accessExpiration.setTime(accessExpiration.getTime() + 15 * 60 * 1000); // 15 minutes
-      Cookies.set('accessToken', access_token, { expires: accessExpiration });
-      if (role) {
-        state.role = role;
-        Cookies.set('role', role, { expires: accessExpiration });
+      saveTokens(action.payload);
+      if (action.payload.role) {
+        state.role = action.payload.role;
       }
-
-
-      const refreshExpiration = new Date();
-      refreshExpiration.setTime(refreshExpiration.getTime() + 24 * 60 * 60 * 1000); // 1 day
-      Cookies.set('refreshToken', refresh_token, { expires: refreshExpiration });
     },
     clearTokens: (state) => {
       state.role = undefined;
@@ -46,14 +50,14 @@ export const updateTokens = (): ((dispatch: Dispatch<Action>) => Promise<string 
     axios.post(baseUrl + '/auth/refresh/', {
       refresh_token: refresh_token
     })
-    .then((response) => {
-      let auth = response.data as IAuth;
-      dispatch(setTokens(auth));
-      resolve(auth.access_token);
-    })
-    .catch((error) => {
-      resolve(undefined);
-    });
+      .then((response) => {
+        let auth = response.data as IAuth;
+        dispatch(setTokens(auth));
+        resolve(auth.access_token);
+      })
+      .catch((error) => {
+        resolve(undefined);
+      });
   }
   else if (!access_token && !refresh_token) {
     dispatch(clearTokens());

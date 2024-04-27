@@ -7,7 +7,7 @@ import Cropper, { Area, Point } from 'react-easy-crop';
 import getCroppedImg from './getCroppedImg';
 
 interface IImageLoadProps {
-    image: File | null,
+    image: File | string | null,
     setImage: (image: File | undefined) => void,
 }
 
@@ -29,7 +29,7 @@ export default function ImageLoad({image, setImage}: IImageLoadProps) {
         <>
             <Stack direction='row' spacing={1}>
                 {image &&
-                    <img src={URL.createObjectURL(image)} alt='Product media' style={{ width: '150px', height: '150px' }} />
+                    <img src={typeof image === 'string' ? image : URL.createObjectURL(image)} alt='Product media' style={{ width: '150px', height: '150px' }} />
                 }
                 <ImageInput image={selectedImage} setImage={setSelectedImage} width='150px' height='150px' />
             </Stack>

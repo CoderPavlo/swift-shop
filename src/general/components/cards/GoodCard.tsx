@@ -1,17 +1,19 @@
 import React from 'react'
-import { IGoods } from '../../../db/goods/goods'
 import { Grid, Card, Typography, CardMedia, CardContent, Stack, Rating, Tooltip, IconButton, Button } from '@mui/material'
 import { Link } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
 import { AddShoppingCart, Delete, Edit } from '@mui/icons-material'
+import { IGoodCardData } from '../../../models/IGood'
+import { baseUrl } from '../../../store/services/baseUrl'
 
 interface IGoodCardProps {
     type: 'view' | 'edit' | 'order',
-    good: IGoods,
-
+    good: IGoodCardData,
+    editClick?: (event: React.MouseEvent<HTMLButtonElement>)=>void,
+    deleteClick?: (event: React.MouseEvent<HTMLButtonElement>)=>void,
 }
 
-export default function GoodCard({ type, good }: IGoodCardProps) {
+export default function GoodCard({ type, good, editClick, deleteClick }: IGoodCardProps) {
     const theme = useTheme();
 
     return (
@@ -33,7 +35,7 @@ export default function GoodCard({ type, good }: IGoodCardProps) {
                     }
                     <CardMedia
                         sx={{ width: '100%', aspectRatio: '1', marginTop: 0 }}
-                        image={good.image}
+                        image={baseUrl + good.image}
                         title={good.name}
                     >
                     </CardMedia>
@@ -44,7 +46,7 @@ export default function GoodCard({ type, good }: IGoodCardProps) {
                         {type === 'view' &&
                             <Stack display="flex" flexDirection="row" justifyContent="space-between">
                                 <Stack>
-                                    <Rating value={good.score} readOnly size="small" precision={0.1} />
+                                    <Rating value={good.rating} readOnly size="small" precision={0.1} />
 
                                     <Typography variant='h5' sx={{ overflow: 'hidden', mt: 1 }}>
                                         $&#160;{good.price}
@@ -65,10 +67,10 @@ export default function GoodCard({ type, good }: IGoodCardProps) {
                                     $&#160;{good.price}
                                 </Typography>
                                 <Stack direction={{ xs: 'column', md: 'row' }} mt={1} display='flex' justifyContent='space-evenly'>
-                                    <Button variant='outlined' color='info' startIcon={<Edit />}>
+                                    <Button variant='outlined' color='info' startIcon={<Edit />} onClick={editClick}>
                                         Змінити
                                     </Button>
-                                    <Button variant='outlined' color='error' sx={{ marginLeft: { md: 1 }, mt: { xs: 1, md: 0 } }} startIcon={<Delete />}>
+                                    <Button variant='outlined' color='error' sx={{ marginLeft: { md: 1 }, mt: { xs: 1, md: 0 } }} startIcon={<Delete />} onClick={deleteClick}>
                                         Видалити
                                     </Button>
                                 </Stack>
