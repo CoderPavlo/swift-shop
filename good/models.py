@@ -2,6 +2,7 @@ from django.db import models
 
 from auth_api.models import Seller
 from category.models import SubCategory
+from django.utils import timezone
 
 class Tag(models.Model):
     name = models.CharField(max_length=255)
@@ -23,6 +24,7 @@ class Good(models.Model):
     image = models.ImageField(upload_to=upload_to)
     categories = models.ManyToManyField(SubCategory)
     tags = models.ManyToManyField(Tag)
+    date_created = models.DateField(default=timezone.now)
     
     def __str__(self):
         return self.name

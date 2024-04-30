@@ -15,6 +15,11 @@ class GoodListSerializer(serializers.ModelSerializer):
         model = Good
         fields = ['id', 'name', 'rating', 'price', 'discount', 'description', 'count', 'image', 'categories', 'tags']
 
+class GoodCardDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Good
+        fields = ['id', 'name', 'rating', 'price', 'discount', 'description', 'count', 'image']
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag

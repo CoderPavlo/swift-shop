@@ -81,7 +81,8 @@ class SubCategoryByShopGetAPIView(APIView):
 
 
 class CategoryGetAPIView(APIView):
-    permission_classes = (AllowAny, )
+    permission_classes = (AllowAny, IsAuthenticated)
+    authentication_classes = [JWTAuthentication]
 
     def get(self, request):
         serialized_data = []

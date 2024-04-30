@@ -2,13 +2,15 @@ import os
 from rest_framework.views import APIView
 from auth_api.authentication import JWTAuthentication
 from good.models import Good, Tag
-from good.serializers import GoodDetailSerializer, GoodListSerializer, GoodSerializer, TagSerializer
+from good.serializers import GoodCardDataSerializer, GoodDetailSerializer, GoodListSerializer, GoodSerializer, TagSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
-
+from rest_framework.pagination import PageNumberPagination
+from good.stopwords import UKRAINIAN_STOP_WORDS
 from server import settings
-
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import linear_kernel
 class GoodAPIView(APIView):
     serializer_class = GoodSerializer
     permission_classes = (IsAuthenticated, )
@@ -49,7 +51,7 @@ class TagListAPIView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+   
 
 class GoodByShopGetAPIView(APIView):
     serializer_class = GoodListSerializer
@@ -68,15 +70,20 @@ class GoodByShopGetAPIView(APIView):
             goods = goods.filter(categories__id=categoryId)
         
         if order == "true":
-            goods = goods.order_by('id')
+            goods = goods.order_by('-id')
         else:
-            goods = goods.order_by('-id') 
+            goods = goods.order_by('id') 
         
         if searchQuery:
             goods = goods.filter(name__icontains=searchQuery)
-
+        paginator = PageNumberPagination()
+        paginator.page_size = 30
         serializer = self.serializer_class(goods, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        paginated_data = paginator.paginate_queryset(serializer.data, request)
+        return Response({
+            'pages': paginator.page.paginator.num_pages,
+            'data': paginated_data
+        })
     
 class GoodByShopAllInfo(APIView):
     serializer_class = GoodDetailSerializer
@@ -121,3 +128,82 @@ class GoodByShopAllInfo(APIView):
             unused_tags.delete()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class GoodForUserGetAPIView(APIView):
+    serializer_class = GoodListSerializer
+    permission_classes = (AllowAny, IsAuthenticated)
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request):
+        tab = self.request.query_params.get('tab')
+        goods = Good.objects.all()
+        if tab==2:
+            goods = goods.order_by('-date_created')
+        paginator = PageNumberPagination()
+        paginator.page_size = 30
+        serializer = self.serializer_class(goods, many=True)
+        paginated_data = paginator.paginate_queryset(serializer.data, request)
+        return Response({
+            'pages': paginator.page.paginator.num_pages,
+            'data': paginated_data
+        })
+        
+class GoodForUserAllInfo(APIView):
+    serializer_class = GoodListSerializer
+    permission_classes = (AllowAny, IsAuthenticated, )
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request, id):
+        good = Good.objects.get(id=id)
+        serializer = self.serializer_class(good)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class SimilarGoodAPIView(APIView):
+    serializer_class = GoodCardDataSerializer
+    permission_classes = (AllowAny, IsAuthenticated, )
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request):
+        id = self.request.query_params.get('id')
+        good = Good.objects.get(id=id)
+        # Отримання всіх товарів, крім цільового
+        all_goods = Good.objects.exclude(pk=id)
+    
+        # corpus = [good.description] + [good.description for good in all_goods]
+        # Створення корпусу даних для векторизації
+        corpus = [good.description + ' '.join([tag.name for tag in good.tags.all()])] + \
+         [good.description + ' '.join([tag.name for tag in good.tags.all()]) for good in all_goods]
+    
+    
+        # Векторизація тексту опису товарів зі своїм списком слів-зупинок
+        vectorizer = TfidfVectorizer(stop_words=UKRAINIAN_STOP_WORDS)
+        tfidf_matrix = vectorizer.fit_transform(corpus)
+    
+        # Розрахунок косинусної схожості між описами товарів
+        cosine_similarities = linear_kernel(tfidf_matrix[0:1], tfidf_matrix[1:]).flatten()
+    
+        # Створення списку подібних товарів
+        similar_goods = []
+        for idx, similarity in enumerate(cosine_similarities):
+            similar_goods.append({
+                'id': all_goods[idx].id,
+                'name': all_goods[idx].name,
+                'rating': all_goods[idx].rating, 
+                'price': all_goods[idx].price, 
+                'discount': all_goods[idx].discount, 
+                'description': all_goods[idx].description, 
+                'count': all_goods[idx].count, 
+                'image': all_goods[idx].image,
+                'similarity': similarity
+            })
+    
+        # Сортування за схожістю
+        similar_goods.sort(key=lambda x: x['similarity'], reverse=True)
+        serializer = self.serializer_class(similar_goods, many=True, partial=True)
+        paginator = PageNumberPagination()
+        paginator.page_size = 30
+        paginated_data = paginator.paginate_queryset(serializer.data, request)
+        return Response({
+            'pages': paginator.page.paginator.num_pages,
+            'data': paginated_data
+        })

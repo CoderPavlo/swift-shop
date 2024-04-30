@@ -1,14 +1,15 @@
 from django.conf import settings
 import jwt
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from auth_api.models import User
-from .serializers import LoginSerializer, RefreshTokenSerializer, UserSerializer
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.exceptions import AuthenticationFailed
+from good.models import Good
+from .serializers import LoginSerializer, RefreshTokenSerializer, SellerInfoSerializer, UserSerializer
+from auth_api.authentication import JWTAuthentication
+from django.db.models import Avg
 
 class RegistrationAPIView(APIView):
     parser_classes = (MultiPartParser, FormParser)
@@ -74,6 +75,35 @@ class RefreshTokenAPIView(APIView):
         # Повернення нових токенів
         response_data = {
             'access_token': user.access_token,
-            'refresh_token': user.refresh_token
+            'refresh_token': user.refresh_token,
+            'role': user.role,
         }
         return Response(response_data, status=status.HTTP_200_OK)
+
+class SellerInfoAPIView(APIView):
+    serializer_class = SellerInfoSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request):
+        user = request.user
+        seller = user.seller
+        total_goods = Good.objects.filter(shop_id=seller.id).count()
+        positive = Good.objects.filter(shop_id=seller.id, rating__gt=2.5).count()
+        average_rating = Good.objects.filter(shop_id=seller.id).aggregate(avg_rating=Avg('rating'))['avg_rating']
+
+
+        seller_data = {
+            'id': seller.id,
+            'name': seller.name,
+            'phone': seller.phone,
+            'adress': seller.adress,
+            'date_registered': seller.date_registered,
+            'avatar': user.avatar.avatar.url if hasattr(user, 'avatar') and user.avatar else None,
+            'percent': positive/total_goods * 100 if total_goods > 0 else 0,
+            'rating': average_rating if average_rating else 0,
+        }
+        serializer = self.serializer_class(data=seller_data)
+        if(serializer.is_valid()):
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -95,4 +95,17 @@ class RefreshTokenSerializer(serializers.Serializer):
             raise serializers.ValidationError("No refresh token provided")
         return value
     
+class AvatarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Avatar
+        fields = ['avatar']
 
+class SellerInfoSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField(max_length=255)
+    phone = serializers.CharField(max_length=255)
+    adress = serializers.CharField(max_length=255)
+    date_registered = serializers.DateField()
+    avatar = serializers.CharField(max_length=255, required=False, allow_null=True)
+    percent = serializers.FloatField()
+    rating = serializers.FloatField()
