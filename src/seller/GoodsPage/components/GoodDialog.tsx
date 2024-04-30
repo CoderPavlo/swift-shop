@@ -315,16 +315,10 @@ export default function GoodDialog({ open, handleClose, type, data, error, loadi
                                                             return option.name;
                                                         }}
                                                         onChange={(event, newValue) => {
-                                                            if (typeof newValue === 'string') {
-                                                                if (!values.tags.some(tag => tag.name === newValue))
-                                                                    setFieldValue('tags', [{
-                                                                        id: -1,
-                                                                        name: newValue,
-                                                                    }, ...values.tags]);
-                                                            }
-                                                            else if (newValue && !values.tags.some(tag => tag.id === newValue.id)) {
+                                                            if(newValue && (!values.tags.some(tag => tag.id === newValue.id) ||
+                                                                (newValue.id===undefined && !values.tags.some(tag => tag.name === newValue.name))
+                                                            ))
                                                                 setFieldValue('tags', [newValue, ...values.tags]);
-                                                            }
                                                         }}
                                                         options={tags}
                                                         renderInput={(params) => <TextField {...params}

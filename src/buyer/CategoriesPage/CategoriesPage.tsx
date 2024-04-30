@@ -28,9 +28,9 @@ export default function CategoriesPage(): React.JSX.Element {
                                     <Typography variant="h6" color="primary" textTransform='uppercase'>
                                         {t(category.name)}
                                     </Typography>
-                                    <Typography variant='subtitle1' component={Link} to={`/categories/${category.id}`} color="secondary">
+                                    {/* <Typography variant='subtitle1' component={Link} to={`/categories/${category.id}`} color="secondary">
                                         Вибрати
-                                    </Typography>
+                                    </Typography> */}
                                 </Stack>
                                 <Grid container spacing={2}>
                                     {category.subcategories.map((subcategory, j) =>

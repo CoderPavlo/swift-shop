@@ -3,11 +3,11 @@ import StoreLink from './StoreLink'
 import { Box, Tooltip, Typography } from '@mui/material'
 
 interface IStoreInfo {
-    to: string,
-    name: string,
-    src: string,
-    storeNumber: number,
-    location: string,
+    to?: string,
+    name?: string,
+    src?: string,
+    storeNumber?: number,
+    location?: string,
     open: string,
 }
 
@@ -29,7 +29,7 @@ export default function StoreInfo({ to, name, src, storeNumber, location, open }
                     {'Розташування:\t' + location}
                 </Typography>
                 <Typography variant='subtitle2' color='text'>
-                    {'Відкритий з:\t' + open}
+                    {'Відкритий:\t' + open}
                 </Typography>
             </Box>
         }>

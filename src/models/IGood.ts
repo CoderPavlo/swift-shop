@@ -1,4 +1,10 @@
+import { ETabs } from "../buyer/HomePage/components/TabsComponent";
 import { ISubCategory } from "./ICategory";
+
+export interface IPagination<T> {
+    pages: number,
+    data: T[],
+}
 
 export interface ITag {
     id?: number,
@@ -38,12 +44,19 @@ export interface IGoodCardData {
     price: number,
     discount: number,
     rating: number,
+    count: number,
 }
 
 export interface IGoodFilterForShop {
     categoryId: number,
     searchQuery: string,
     order: boolean,
+    page: number,
+}
+
+export interface IGoodFilterHome {
+    tab: string;
+    page: string;
 }
 
 export interface IGoodFormData {

@@ -1,46 +1,115 @@
-import { Button, ButtonGroup, Grid, Rating, Stack, Typography } from '@mui/material'
+import { Button, ButtonGroup, Grid, Pagination, Rating, Skeleton, Stack, Typography } from '@mui/material'
 import React from 'react'
-import { goods } from '../../db/goods/goods'
 import Counts from '../CartPage/components/Counts'
+import { goodAPI } from '../../store/services/goodAPI';
+import { useParams } from 'react-router';
+import { baseUrl } from '../../store/services/baseUrl';
+import GoodsSkeleton from '../HomePage/skeletons/GoodsSkeleton';
+import GoodCard from '../../general/components/cards/GoodCard';
+
 export default function GoodPage() {
     const [quantity, setQuantity] = React.useState<number>(1);
+    const { id } = useParams();
+    const { data: good, isLoading, error } = goodAPI.useFetchGoodByIdQuery(Number(id || '0'));
+    const [page, setPage] = React.useState<number>(1);
+    const { data: similarGoods, isLoading: similarLoading, error: similarError } = goodAPI.useFetchSimilarGoodsQuery({ id: Number(id || '0'), page: page });
+    React.useEffect(()=>window.scrollTo({ top: 0, behavior: 'smooth' }), [id])
     return (
-        <Grid container spacing={2} mt={0}>
-            <Grid item xs={12} md={5} display='flex' justifyContent='center'>
-                <img src={goods[0].image} alt={goods[0].name} />
-            </Grid>
-            <Grid item xs={12} md={7}>
-                <Typography variant='h5' color='text' width='100%' textAlign='center'>
-                    {goods[0].name}
-                </Typography>
-                <Rating value={goods[0].rating} readOnly size="medium" precision={0.1} sx={{ mt: 1 }} />
-
-                <Stack direction='row' mt={2}>
-
-                    <Typography variant='h5' color='primary'>
-                        {'$ ' + goods[0].price}
-                    </Typography>
-                    {goods[1].discount > 0 &&
-                        <Typography variant='subtitle1' color='error' ml={1}>
-                            {'-' + goods[1].discount + '%'}
+        <Grid container spacing={2} mt={0} ml={0} sx={{width: '100%'}}>
+            {error ? <Typography variant='subtitle1' color='error' textAlign='center'>
+                Сталася помилка при загрузці
+            </Typography> :
+                <>
+                    <Grid item xs={12} md={5} display='flex' justifyContent='center'>
+                        {isLoading ?
+                            <Skeleton variant="rounded" width={500} height={500} />
+                            :
+                            <img src={baseUrl + good?.image} alt={good?.name} />
+                        }
+                    </Grid>
+                    <Grid item xs={12} md={7} display='flex' justifyContent='center' flexDirection='column'>
+                        <Typography variant='h5' color='text' width='100%' textAlign='center' >
+                            {isLoading ? <Skeleton /> : good?.name}
                         </Typography>
+                        <Stack direction='row' mt={2}>
+                            <Typography variant='h5' color='primary'>
+                                {isLoading ? <Skeleton /> : '$ ' + good?.price}
+                            </Typography>
+                            {good && good?.discount > 0 &&
+                                <Typography variant='subtitle1' color='error' ml={1}>
+                                    {'-' + good?.discount + '%'}
+                                </Typography>
+                            }
+                        </Stack>
+
+                        <Stack sx={{ mt: 1 }} display='flex'  >
+                            {isLoading ?
+                                <Skeleton height='24px' /> :
+                                <Rating value={good?.rating} readOnly size="medium" precision={0.1} />
+                            }
+                        </Stack>
+                        <Typography variant='h6' color='secondary.main' mt={4} textAlign='center' >
+                            {isLoading ? <Skeleton /> : good?.description}
+                        </Typography>
+
+
+
+                        <Typography variant='h6' color='text' mt={4}>
+                            {isLoading ? <Skeleton /> : 'Кількість:'}
+                        </Typography>
+                        {isLoading ?
+                            <Skeleton height='40px' />
+                            :
+                            <Counts value={quantity} onChange={(value) => setQuantity(value)} min={1} max={good?.count || 1} />
+                        }
+                        {isLoading ?
+                            <Skeleton height='40px' /> :
+                            <ButtonGroup
+                                fullWidth
+                                sx={{ mt: 1 }}
+                            >
+                                <Button variant='outlined'>Додати в корзину</Button>
+                                <Button variant='contained'>Купити</Button>
+                            </ButtonGroup>
+                        }
+                    </Grid>
+                </>
+
+            }
+            {similarError ? <Typography variant='subtitle1' color='error' textAlign='center'>
+                Сталася помилка при загрузці
+            </Typography> :
+                <>
+                    <Typography variant="subtitle1" color="primary" textTransform='uppercase' sx={{width: '100%', mt: 1}}>
+                        {similarLoading ? <Skeleton /> : 'Подібні товари'}
+                    </Typography>
+                    {similarLoading ?
+                        <GoodsSkeleton /> :
+                        <>
+                            <Grid container spacing={2} sx={{ mt: '4px' }}>
+                                {similarGoods?.data.map(good =>
+                                    <GoodCard key={good.id} type='view' good={good} />
+                                )}
+                            </Grid>
+                            {similarGoods?.pages && similarGoods?.pages > 1 &&
+                                <Pagination count={similarGoods?.pages} variant="outlined" color="primary" page={page} onChange={(e, page) => { setPage(page); window.scrollTo({ top: 600, behavior: 'smooth' }); }}
+                                    size='large'
+                                    sx={{
+                                        paddingBlock: 2,
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        width: '100%'
+                                    }}
+                                />
+                            }
+                        </>
+
                     }
-                </Stack>
-                <Typography variant='subtitle1' color='text' mt={1}>
-                    Специфікація:
-                </Typography>
-                <Typography variant='subtitle1' color='text' mt={4}>
-                    Кількість:
-                </Typography>
-                <Counts value={quantity} onChange={(value) => setQuantity(value)} min={1} max={100} />
-                <ButtonGroup
-                    fullWidth
-                    sx={{mt: 1}}
-                >
-                    <Button variant='outlined'>Додати в корзину</Button>
-                    <Button variant='contained'>Купити</Button>
-                </ButtonGroup>
-            </Grid>
+                </>
+            }
+
+
+
         </Grid>
     )
 }

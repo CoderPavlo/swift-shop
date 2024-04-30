@@ -29,14 +29,19 @@ interface IBuyer {
     gender: number;
 }
 
-interface ISeller {
+export interface ISeller {
+    id?: number;
     name: string;
     phone: string;
     adress: string;
+    date_registered?: string;
+    avatar?: string;
+    percent?: number,
+    rating?: number,
 }
 
 export interface IAuth {
     access_token: string;
     refresh_token: string;
-    role?: string,
+    role?: string;
 }

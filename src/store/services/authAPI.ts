@@ -1,11 +1,15 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { IAuth, IUser } from '../../models/IUser'
+import { IAuth, IUser, ISeller } from '../../models/IUser'
 import { baseUrl } from './baseUrl';
+import prepareHeaders from './prepareHeaders';
 
 
 export const authAPI = createApi({
     reducerPath: 'authAPI',
-    baseQuery: fetchBaseQuery({baseUrl: baseUrl + '/auth/'}),
+    baseQuery: fetchBaseQuery({
+        baseUrl: baseUrl + '/auth/',
+        prepareHeaders,
+    }),
     endpoints: (build)=>({
         register: build.mutation<IAuth, IUser>({
             query: (user)=>{
@@ -47,6 +51,14 @@ export const authAPI = createApi({
                 method: 'POST',
                 body: user
             })
+        }),
+        getSellerInfo: build.query<ISeller, void>({
+            query: () => {
+                return {
+                    url: 'seller/',
+                };
+            },
+
         }),
 
     })

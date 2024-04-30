@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { baseUrl } from './baseUrl';
-import { IGood, IGoodByIdForEdit, IGoodCardData, IGoodFilterForShop, IGoods, ITag } from '../../models/IGood';
+import { IGood, IGoodByIdForEdit, IGoodCardData, IGoodFilterForShop, IGoodFilterHome, IGoods, IPagination, ITag } from '../../models/IGood';
 import prepareHeaders from './prepareHeaders';
 
 
@@ -53,10 +53,10 @@ export const goodAPI = createApi({
             invalidatesTags: ['Good'],
         }),
 
-        fetchGoodsByShop: build.query<IGoodCardData[], IGoodFilterForShop>({
+        fetchGoodsByShop: build.query<IPagination<IGoodCardData>, IGoodFilterForShop>({
             query: (filter) => {
                 return {
-                    url: `goodsByShop/?categoryId=${filter.categoryId}&searchQuery=${filter.searchQuery}&order=${filter.order}`,
+                    url: `goodsByShop/?categoryId=${filter.categoryId}&searchQuery=${filter.searchQuery}&order=${filter.order}&page=${filter.page}`,
                 };
             },
             providesTags: ['Good'],
@@ -99,6 +99,31 @@ export const goodAPI = createApi({
                 };
             },
             invalidatesTags: ['Good', 'Tag'],
+        }),
+
+        fetchGoodsForUser: build.query<IPagination<IGoodCardData>, IGoodFilterHome>({
+            query: (filter) => {
+                return {
+                    url: `goodsForUser/?tab=${filter.tab}&page=${filter.page}`,
+                };
+            },
+            providesTags: ['Good'],
+        }),
+        fetchGoodById: build.query<IGoodCardData, number>({
+            query: (id) => {
+                return {
+                    url: `goodForUser/${id}/`,
+                };
+            },
+            providesTags: ['Good'],
+        }),
+        fetchSimilarGoods: build.query<IPagination<IGoodCardData>, {id: number, page:number}>({
+            query: (filter) => {
+                return {
+                    url: `similar/?id=${filter.id}&page=${filter.page}`,
+                };
+            },
+            providesTags: ['Good'],
         }),
     })
 })

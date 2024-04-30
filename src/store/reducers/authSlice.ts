@@ -11,7 +11,7 @@ export const saveTokens = (auth: IAuth) => {
   accessExpiration.setTime(accessExpiration.getTime() + 15 * 60 * 1000); // 15 minutes
   Cookies.set('accessToken', auth.access_token, { expires: accessExpiration });
 
-  if(auth.role)
+  if (auth.role)
     Cookies.set('role', auth.role, { expires: accessExpiration });
 
   const refreshExpiration = new Date();
@@ -19,13 +19,32 @@ export const saveTokens = (auth: IAuth) => {
   Cookies.set('refreshToken', auth.refresh_token, { expires: refreshExpiration });
 }
 
-const initialState = {
-  role: Cookies.get('role'),
-};
+export const getRole = async () : Promise<string | undefined> => {
+  let role = Cookies.get('role');
+  const refresh = Cookies.get('refreshToken');
+  if (!role && refresh) {
+    await axios.post(baseUrl + '/auth/refresh/', {
+      refresh_token: refresh
+    })
+      .then(async (response) => {
+        let auth = response.data as IAuth;
+        role = auth.role;
+        saveTokens(auth);
+      })
+      .catch((error) => {
+      });
+  }
+  return role;
+}
+// const initialState = {
+//   role: await getRole(),
+// };
 
 export const authSlice = createSlice({
   name: 'auth',
-  initialState,
+  initialState: {
+    role: await getRole(),
+  },
   reducers: {
     setTokens: (state, action: PayloadAction<IAuth>) => {
       saveTokens(action.payload);

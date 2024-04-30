@@ -37,6 +37,8 @@ export default function GoodCard({ type, good, editClick, deleteClick }: IGoodCa
                         sx={{ width: '100%', aspectRatio: '1', marginTop: 0 }}
                         image={baseUrl + good.image}
                         title={good.name}
+                        component='img'
+                        loading="lazy"
                     >
                     </CardMedia>
                     <CardContent>
