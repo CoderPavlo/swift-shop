@@ -1,6 +1,7 @@
 import os
 from rest_framework.views import APIView
 from auth_api.authentication import JWTAuthentication
+from forecast.serializers import ViewSerializer
 from good.models import Good, Tag
 from good.serializers import GoodCardDataSerializer, GoodDetailSerializer, GoodListSerializer, GoodSerializer, TagSerializer
 from rest_framework.response import Response
@@ -144,6 +145,14 @@ class GoodForUserAllInfo(APIView):
 
     def get(self, request, id):
         good = Good.objects.get(id=id)
+        if request.user.buyer:
+            data={
+                'buyer': request.user.buyer.id,
+                'good': good.id,
+            }
+            serializer = ViewSerializer(data=data)
+            serializer.is_valid(raise_exception=True)      
+            serializer.save()
         serializer = self.serializer_class(good)
         return Response(serializer.data, status=status.HTTP_200_OK)
     

@@ -27,5 +27,6 @@ urlpatterns = [
     path('category/', include('category.urls', namespace='category')),
     path('good/', include('good.urls', namespace='good')),
     path('order/', include('order.urls', namespace='order')),
+    path('forecast/', include('forecast.urls', namespace='forecast')),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

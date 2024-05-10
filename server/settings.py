@@ -42,12 +42,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
-
     'auth_api',
     'category',
     'good',
     'order',
-    
+    'forecast',
 ]
 
 MIDDLEWARE = [
