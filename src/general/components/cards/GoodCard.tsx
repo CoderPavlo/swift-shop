@@ -2,9 +2,10 @@ import React from 'react'
 import { Grid, Card, Typography, CardMedia, CardContent, Stack, Rating, Tooltip, IconButton, Button } from '@mui/material'
 import { Link } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
-import { AddShoppingCart, Delete, Edit } from '@mui/icons-material'
+import { Delete, Edit } from '@mui/icons-material'
 import { IGoodCardData } from '../../../models/IGood'
 import { baseUrl } from '../../../store/services/baseUrl'
+import ViewCard from './ViewCard'
 
 interface IGoodCardProps {
     type: 'view' | 'edit' | 'order',
@@ -45,24 +46,7 @@ export default function GoodCard({ type, good, editClick, deleteClick }: IGoodCa
                         <Typography variant='h6' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {good.name}
                         </Typography>
-                        {type === 'view' &&
-                            <Stack display="flex" flexDirection="row" justifyContent="space-between">
-                                <Stack>
-                                    <Rating value={good.rating} readOnly size="small" precision={0.1} />
-
-                                    <Typography variant='h5' sx={{ overflow: 'hidden', mt: 1 }}>
-                                        $&#160;{good.price}
-                                    </Typography>
-
-                                </Stack>
-                                <Tooltip title="Додати до корзини">
-                                    <IconButton color="primary" size='large' onClick={(e) => e.preventDefault()}>
-                                        <AddShoppingCart />
-                                    </IconButton>
-                                </Tooltip>
-                            </Stack>
-
-                        }
+                        {type === 'view' && <ViewCard good={good}/>}
                         {type === 'edit' &&
                             <>
                                 <Typography variant='h5'>

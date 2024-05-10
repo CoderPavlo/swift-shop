@@ -11,7 +11,7 @@ import GoodCard from '../../general/components/cards/GoodCard'
 export default function HomePage() {
     const [page, setPage] = React.useState<number>(1);
     const { data: sellerInfo, isLoading: sellerLoading, error: sellerError } = authAPI.useGetSellerInfoQuery();
-    const { data: goods, error: goodsError, isLoading: goodsLoading } = goodAPI.useFetchGoodsByShopQuery({ page: page, searchQuery: '', categoryId: -1, order: true });
+    const { data: goods, error: goodsError, isFetching: goodsLoading } = goodAPI.useFetchGoodsByShopQuery({ page: page, searchQuery: '', categoryId: -1, order: true });
 
     const { t } = useTranslation();
 

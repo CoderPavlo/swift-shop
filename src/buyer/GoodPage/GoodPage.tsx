@@ -10,10 +10,10 @@ import GoodCard from '../../general/components/cards/GoodCard';
 export default function GoodPage() {
     const [quantity, setQuantity] = React.useState<number>(1);
     const { id } = useParams();
-    const { data: good, isLoading, error } = goodAPI.useFetchGoodByIdQuery(Number(id || '0'));
+    const { data: good, isFetching, error } = goodAPI.useFetchGoodByIdQuery(Number(id || '0'));
     const [page, setPage] = React.useState<number>(1);
-    const { data: similarGoods, isLoading: similarLoading, error: similarError } = goodAPI.useFetchSimilarGoodsQuery({ id: Number(id || '0'), page: page });
-    React.useEffect(()=>window.scrollTo({ top: 0, behavior: 'smooth' }), [id])
+    const { data: similarGoods, isFetching: similarLoading, error: similarError } = goodAPI.useFetchSimilarGoodsQuery({ id: Number(id || '0'), page: page });
+    React.useEffect(()=>{window.scrollTo({ top: 0, behavior: 'smooth' }); setPage(1)}, [id])
     return (
         <Grid container spacing={2} mt={0} ml={0} sx={{width: '100%'}}>
             {error ? <Typography variant='subtitle1' color='error' textAlign='center'>
@@ -21,7 +21,7 @@ export default function GoodPage() {
             </Typography> :
                 <>
                     <Grid item xs={12} md={5} display='flex' justifyContent='center'>
-                        {isLoading ?
+                        {isFetching ?
                             <Skeleton variant="rounded" width={500} height={500} />
                             :
                             <img src={baseUrl + good?.image} alt={good?.name} />
@@ -29,11 +29,11 @@ export default function GoodPage() {
                     </Grid>
                     <Grid item xs={12} md={7} display='flex' justifyContent='center' flexDirection='column'>
                         <Typography variant='h5' color='text' width='100%' textAlign='center' >
-                            {isLoading ? <Skeleton /> : good?.name}
+                            {isFetching ? <Skeleton /> : good?.name}
                         </Typography>
                         <Stack direction='row' mt={2}>
                             <Typography variant='h5' color='primary'>
-                                {isLoading ? <Skeleton /> : '$ ' + good?.price}
+                                {isFetching ? <Skeleton /> : '$ ' + good?.price}
                             </Typography>
                             {good && good?.discount > 0 &&
                                 <Typography variant='subtitle1' color='error' ml={1}>
@@ -43,26 +43,26 @@ export default function GoodPage() {
                         </Stack>
 
                         <Stack sx={{ mt: 1 }} display='flex'  >
-                            {isLoading ?
+                            {isFetching ?
                                 <Skeleton height='24px' /> :
                                 <Rating value={good?.rating} readOnly size="medium" precision={0.1} />
                             }
                         </Stack>
                         <Typography variant='h6' color='secondary.main' mt={4} textAlign='center' >
-                            {isLoading ? <Skeleton /> : good?.description}
+                            {isFetching ? <Skeleton /> : good?.description}
                         </Typography>
 
 
 
                         <Typography variant='h6' color='text' mt={4}>
-                            {isLoading ? <Skeleton /> : 'Кількість:'}
+                            {isFetching ? <Skeleton /> : 'Кількість:'}
                         </Typography>
-                        {isLoading ?
+                        {isFetching ?
                             <Skeleton height='40px' />
                             :
                             <Counts value={quantity} onChange={(value) => setQuantity(value)} min={1} max={good?.count || 1} />
                         }
-                        {isLoading ?
+                        {isFetching ?
                             <Skeleton height='40px' /> :
                             <ButtonGroup
                                 fullWidth

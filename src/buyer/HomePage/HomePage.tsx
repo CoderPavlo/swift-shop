@@ -18,13 +18,13 @@ declare module "react-router-dom" {
 
 export default function HomePage(): React.JSX.Element {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { data: goods, isLoading, error } = goodAPI.useFetchGoodsForUserQuery({ tab: searchParams.get('tab') || '0', page: searchParams.get('page') || '1' });
+  const { data: goods, isFetching, error } = goodAPI.useFetchGoodsForUserQuery({ tab: searchParams.get('tab') || '0', page: searchParams.get('page') || '1' });
   
   return (
     <>
       <CategoriesBlock />
       <TabsComponent value={Number(searchParams.get('tab') || '0')} onChange={(e, newValue) => setSearchParams({ tab: newValue.toString(), page: searchParams.get('page') || '1' })} />
-      {isLoading ? <GoodsSkeleton /> :
+      {isFetching ? <GoodsSkeleton /> :
         error ?
           <Typography variant='subtitle1' color='error' textAlign='center'>
             Сталася помилка при загрузці

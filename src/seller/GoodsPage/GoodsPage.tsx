@@ -21,7 +21,7 @@ export default function GoodsPage() {
     const [goodProcessing, setGoodProcessing] = React.useState<{ action: 'add' | 'edit' | 'delete' | null, id: number }>({ action: null, id: -1 });
     const [editId, setEditId] = React.useState<number>(-1);
     const { data: categories, error: categoriesError, isLoading: categoriesLoading } = categoriesAPI.useFetchSubCategoriesByShopQuery();
-    const { data: goods, error: goodsError, isLoading: goodsLoading, refetch: goodsRefetch } = goodAPI.useFetchGoodsByShopQuery(filter, { refetchOnMountOrArgChange: false });
+    const { data: goods, error: goodsError, isFetching: goodsLoading, refetch: goodsRefetch } = goodAPI.useFetchGoodsByShopQuery(filter, { refetchOnMountOrArgChange: false });
     const [deleteGood, { error: deleteError, isLoading: deleteLoading }] = goodAPI.useDeleteGoodMutation();
     const { data: goodForChange, error: goodForChangeError, isLoading: goodForChangeLoading } = goodAPI.useFetchGoodByIdForEditQuery(editId, { refetchOnMountOrArgChange: true });
 
