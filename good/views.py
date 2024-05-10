@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
 from good.stopwords import UKRAINIAN_STOP_WORDS
 from server import settings
+from server.paginate import paginate
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 class GoodAPIView(APIView):
@@ -76,14 +77,8 @@ class GoodByShopGetAPIView(APIView):
         
         if searchQuery:
             goods = goods.filter(name__icontains=searchQuery)
-        paginator = PageNumberPagination()
-        paginator.page_size = 30
         serializer = self.serializer_class(goods, many=True)
-        paginated_data = paginator.paginate_queryset(serializer.data, request)
-        return Response({
-            'pages': paginator.page.paginator.num_pages,
-            'data': paginated_data
-        })
+        return paginate(serializer.data, request)
     
 class GoodByShopAllInfo(APIView):
     serializer_class = GoodDetailSerializer
@@ -139,14 +134,8 @@ class GoodForUserGetAPIView(APIView):
         goods = Good.objects.all()
         if tab==2:
             goods = goods.order_by('-date_created')
-        paginator = PageNumberPagination()
-        paginator.page_size = 30
         serializer = self.serializer_class(goods, many=True)
-        paginated_data = paginator.paginate_queryset(serializer.data, request)
-        return Response({
-            'pages': paginator.page.paginator.num_pages,
-            'data': paginated_data
-        })
+        return paginate(serializer.data, request)
         
 class GoodForUserAllInfo(APIView):
     serializer_class = GoodListSerializer
@@ -200,10 +189,5 @@ class SimilarGoodAPIView(APIView):
         # Сортування за схожістю
         similar_goods.sort(key=lambda x: x['similarity'], reverse=True)
         serializer = self.serializer_class(similar_goods, many=True, partial=True)
-        paginator = PageNumberPagination()
-        paginator.page_size = 30
-        paginated_data = paginator.paginate_queryset(serializer.data, request)
-        return Response({
-            'pages': paginator.page.paginator.num_pages,
-            'data': paginated_data
-        })
+        
+        return paginate(serializer.data, request)

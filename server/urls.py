@@ -26,5 +26,6 @@ urlpatterns = [
     path('auth/', include('auth_api.urls', namespace='auth_api')),
     path('category/', include('category.urls', namespace='category')),
     path('good/', include('good.urls', namespace='good')),
+    path('order/', include('order.urls', namespace='order')),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

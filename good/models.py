@@ -1,6 +1,6 @@
 from django.db import models
 
-from auth_api.models import Seller
+from auth_api.models import Buyer, Seller
 from category.models import SubCategory
 from django.utils import timezone
 

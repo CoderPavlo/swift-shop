@@ -109,3 +109,11 @@ class SellerInfoSerializer(serializers.Serializer):
     avatar = serializers.CharField(max_length=255, required=False, allow_null=True)
     percent = serializers.FloatField()
     rating = serializers.FloatField()
+
+class SellerIdSerializer(serializers.Serializer):
+    avatar = serializers.CharField(max_length=255, source='user.avatar.avatar.url')
+    id = serializers.IntegerField()
+    name = serializers.CharField(max_length=255)
+    class Meta:
+        model = Seller
+        fields = ['id', 'name', 'avatar']
