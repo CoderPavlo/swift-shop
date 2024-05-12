@@ -1,10 +1,17 @@
 from django.urls import path
 
-from forecast.views import GenerateViewsAPIView
+from forecast.views import AdditionalStatisticsViews, CategoryStatisticsViews, GenerateCartAPIView, GenerateOrdersAPIView, GenerateViewsAPIView, GoodStatisticsViews, PredictFutureViews, PredictUserActivityViews
 
 
 app_name = 'forecast'
 urlpatterns = [
     path('generateViews/', GenerateViewsAPIView.as_view()),
+    path('generateCarts/', GenerateCartAPIView.as_view()),
+    path('generateOrders/', GenerateOrdersAPIView.as_view()),
+    path('userActivity/', PredictUserActivityViews.as_view()),
+    path('categoryStatistics/', CategoryStatisticsViews.as_view()),
+    path('additionalStatistics/', AdditionalStatisticsViews.as_view()),
+    path('goodsStatistics/', GoodStatisticsViews.as_view()),
+    path('predict/', PredictFutureViews.as_view()),
 
 ]

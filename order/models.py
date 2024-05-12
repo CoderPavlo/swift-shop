@@ -10,12 +10,13 @@ class OrderGood(models.Model):
     discount = models.FloatField(default=0)
 
     def __str__(self):
-        return self.good.name + ' - ' + self.count
+        return self.good.name
     
 class Cart(models.Model):
     buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, related_name='buyer', unique=False)
     good = models.ForeignKey(Good, on_delete=models.CASCADE, related_name='cart_good', unique=False)
     count = models.IntegerField(default=1)
+    date = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.buyer.first_name + ' - ' + self.good.name
