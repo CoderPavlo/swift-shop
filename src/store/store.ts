@@ -4,6 +4,7 @@ import authReducer from "./reducers/authSlice";
 import { categoriesAPI } from "./services/categoriesAPI";
 import { goodAPI } from "./services/goodAPI";
 import { orderAPI } from "./services/orderAPI";
+import { forecastAPI } from "./services/forecastAPI";
 
 const rootReducer = combineReducers({
     authReducer,
@@ -11,13 +12,14 @@ const rootReducer = combineReducers({
     [categoriesAPI.reducerPath]: categoriesAPI.reducer,
     [goodAPI.reducerPath]: goodAPI.reducer,
     [orderAPI.reducerPath]: orderAPI.reducer,
+    [forecastAPI.reducerPath]: forecastAPI.reducer,
 })
 
 export const setupStore = () => {
     return configureStore({
         reducer: rootReducer,
         middleware: (getDefaultMiddleware)=> 
-            getDefaultMiddleware().concat(authAPI.middleware, categoriesAPI.middleware, goodAPI.middleware, orderAPI.middleware)
+            getDefaultMiddleware().concat(authAPI.middleware, categoriesAPI.middleware, goodAPI.middleware, orderAPI.middleware, forecastAPI.middleware)
     })
 }
 
