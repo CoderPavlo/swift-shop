@@ -102,8 +102,9 @@ class OrderAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get(self, request):
-        orders = Order.objects.all()
-        serializer = OrderDetailSerializer(data=orders, many=True)
+        orders = Order.objects.all().filter(buyer=request.user.buyer.id)
+        serializer = OrderDetailSerializer(orders, many=True)
+        # serializer.is_valid(raise_exception=True)
         return paginate(serializer.data, request, 15)
     
 class CartToOrderAPIView(APIView):
