@@ -2,13 +2,12 @@ from rest_framework import serializers
 
 from category.models import SubCategory
 from category.serializers import SubCategoryListSerializer
-from good.models import Good, Tag
+from good.models import Good, SearchHistory, Tag
 
 class GoodSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(write_only=True, required=True)
     class Meta:
         model = Good
-        fields = ['shop', 'name', 'rating', 'price', 'discount', 'description', 'count', 'image', 'categories', 'tags']
+        fields = '__all__'
 
 class GoodListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -39,3 +38,8 @@ class GoodDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Good
         fields = ['id', 'name', 'price', 'discount', 'description', 'count', 'image', 'categories', 'tags']
+
+class SearchHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SearchHistory
+        fields = ['query', 'user']

@@ -195,3 +195,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # URL для доступу до медіафайлів у браузері
 MEDIA_URL = '/media/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')

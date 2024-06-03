@@ -1,15 +1,22 @@
 from django.shortcuts import render
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
 from auth_api.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
 import random
-from datetime import datetime, timedelta
-
+from datetime import date, datetime, timedelta
+from sklearn.linear_model import LinearRegression
 from django.utils import timezone
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
+from sklearn.neural_network import MLPRegressor
+from sklearn.preprocessing import MinMaxScaler
 
 from auth_api.models import Buyer
 from forecast.analysis import get_additional_forecast, get_category_statistics, get_forecast, get_goods_statistics
@@ -22,8 +29,11 @@ from statsmodels.tsa.statespace.sarimax import SARIMAX
 from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.arima.model import ARIMA
 
-from order.models import Order
+from order.models import Cart, Order
 from order.serializers import CartSerializer, OrderGoodSerializer, OrderSerializer
+from django.db.models import Count, Sum, Avg
+
+from server import settings
 
 class GenerateOrdersAPIView(APIView):
     permission_classes = (AllowAny, )
@@ -144,7 +154,7 @@ class GenerateViewsAPIView(APIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-class PredictFutureViews(APIView):
+class PredictFutureValues(APIView):
     permission_classes = (AllowAny, )
 
 
@@ -161,7 +171,7 @@ class PredictFutureViews(APIView):
     def get_views(self, seller_id, interval):
     
     # Кінцева дата
-        end_date = timezone.now()  # Закінчуємо 11.04.2024
+        end_date = timezone.now()-timedelta(days=30)  # Закінчуємо 11.04.2024
         # Початкова дата
         start_date = end_date - timedelta(days=365)  # Починаємо з 11.04.2023
     # Заготовка масиву views
@@ -191,32 +201,46 @@ class PredictFutureViews(APIView):
 
 
     def post(self, request):
-        # seller_id = request.user.seller
-        seller_id = 2  # Тимчасове значення для ілюстрації
-        period = request.data.get('period', 2)  # 0-day, 1-week, 2-month
+        period = request.data.get('period', 0)  # 0-day, 1-week, 2-month
         interval = self.get_interval(period)
-        views = self.get_views(seller_id, interval)
+        # views = self.get_views(seller_id, interval)
+        static_file_path = settings.STATIC_ROOT + "/Sales_Data_Analysis.csv"
+        data = pd.read_csv(static_file_path)
 
-        train = views[:-1]
-        test = views[-1:]
-        plt.plot(train, color = "black")
-        plt.plot(pd.concat([train[-1:], test]), color = "red")
-        plt.ylabel('Views')
-        plt.xlabel('Date')
+        # Перетворення колонки "Order Date" в формат дати
+        data['Order Date'] = pd.to_datetime(data['Order Date'])
+        # Згрупуємо дані за проміжками довжиною в інтервал та просумуємо кількість продажів за цей період
+        sales_sum = data.groupby(pd.Grouper(key='Order Date', freq=interval)).size().reset_index(name='count')[:-1]
+        # Створимо новий DataFrame з індексами, що позначають початок проміжку та колонкою count
+        data = sales_sum.set_index('Order Date')
+        train = data[:-1]
+        test = data[-1:]
+        plt.plot(train, color = "black", label='Історичні дані')
+        plt.plot(pd.concat([train[-1:], test]), color = "red", label='Реальне значення')
+        plt.ylabel('Кількість')
+        plt.xlabel('Дата')
         plt.xticks(rotation=45)
-        plt.title("Train/Test split for data")
+        plt.title("Прогнозування значення продажів")
         y = train['count']
-        ARMAmodel = SARIMAX(y, order = (4, 3, 1))
+        
+        lin_reg = LinearRegression()
+        lin_reg.fit(train.index.map(lambda x: x.toordinal()).values.reshape(-1, 1), y)
+        y_pred_lin_reg = lin_reg.predict(test.index.map(lambda x: x.toordinal()).values.reshape(-1, 1))
+        y_pred_out = pd.concat([train[-1:], pd.DataFrame(data=y_pred_lin_reg, index=test.index, columns=['count'])]) 
+        plt.plot(y_pred_out, color='orange', label='Лінійна регресія')
+        linear_regression_rmse = np.sqrt(mean_squared_error(test["count"].values, y_pred_lin_reg))
+        # Розрахунок RMSE для лінійної регресії
+        ARMAmodel = SARIMAX(y, order = (1, 1, 1))
         ARMAmodel = ARMAmodel.fit()
         y_pred = ARMAmodel.get_forecast(len(test.index))
         y_pred_df = y_pred.conf_int(alpha = 0.05) 
         y_pred_df["count"] = ARMAmodel.predict(start = y_pred_df.index[0], end = y_pred_df.index[-1])
         y_pred_df.index = test.index
         y_pred_out = pd.concat([train[-1:], y_pred_df["count"]]) 
-        plt.plot(y_pred_out, color='green', label = 'Predictions')
+        plt.plot(y_pred_out, color='green', label = 'ARMA')
         arma_rmse = np.sqrt(mean_squared_error(test["count"].values, y_pred_df["count"]))
 
-        ARIMAmodel = ARIMA(y, order = (4, 3, 1))
+        ARIMAmodel = ARIMA(y, order = (1, 1, 1))
         ARIMAmodel = ARIMAmodel.fit()
 
         y_pred = ARIMAmodel.get_forecast(len(test.index))
@@ -224,10 +248,10 @@ class PredictFutureViews(APIView):
         y_pred_df["count"] = ARIMAmodel.predict(start = y_pred_df.index[0], end = y_pred_df.index[-1])
         y_pred_df.index = test.index
         y_pred_out = pd.concat([train[-1:], y_pred_df["count"]]) 
-        plt.plot(y_pred_out, color='Yellow', label = 'ARIMA Predictions')
+        plt.plot(y_pred_out, color='Yellow', label = 'ARIMA')
         arima_rmse = np.sqrt(mean_squared_error(test["count"].values, y_pred_df["count"]))
         
-        SARIMAXmodel = SARIMAX(y, order = (4, 3, 1), seasonal_order=(2,2,2,12))
+        SARIMAXmodel = SARIMAX(y, order = (1, 1, 1), seasonal_order=(1,1,1,12))
         SARIMAXmodel = SARIMAXmodel.fit()
 
         y_pred = SARIMAXmodel.get_forecast(len(test.index))
@@ -235,13 +259,14 @@ class PredictFutureViews(APIView):
         y_pred_df["count"] = SARIMAXmodel.predict(start = y_pred_df.index[0], end = y_pred_df.index[-1])
         y_pred_df.index = test.index
         y_pred_out = pd.concat([train[-1:], y_pred_df["count"]]) 
-        plt.plot(y_pred_out, color='Blue', label = 'SARIMA Predictions')
+        plt.plot(y_pred_out, color='Blue', label = 'SARIMA')
         plt.legend()
 
 
         plt.show()
         sarimax_rmse = np.sqrt(mean_squared_error(test["count"].values, y_pred_df["count"]))
         result = {
+            'linear_regression_rmse': linear_regression_rmse,
             'arma': arma_rmse,
             'arima': arima_rmse,
             'sarimax': sarimax_rmse,
@@ -284,3 +309,135 @@ class CategoryStatisticsViews(APIView):
         type = self.request.query_params.get('type')
         seller_id=2
         return Response(get_category_statistics(seller_id, int(period), int(type)), status=status.HTTP_200_OK)
+    
+class BuyerSegmentation(APIView):
+    def get(self, request):
+        # Отримання параметра shop_id з запиту, якщо він передано
+        shop_id = 2
+
+        # Отримання усіх покупців з бази даних
+        buyers = Buyer.objects.all()
+
+        # Створення порожнього датафрейму
+        dataframe = []
+
+        for buyer in buyers:
+            # Розрахунок віку покупця на основі року, місяця та дня народження
+            birth_date = date(buyer.year, buyer.month, buyer.day)
+            today = date.today()
+            age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+
+            # Отримання кількості переглядів товарів певного магазину
+            views_count = View.objects.filter(buyer=buyer, good__shop_id=shop_id).count()
+
+            # Отримання кількості товарів у кошику певного магазину
+            cart_count = Cart.objects.filter(buyer=buyer, good__shop_id=shop_id).count()
+            
+
+            # Отримання кількості замовлень певного магазину
+            order_count = Order.objects.filter(buyer=buyer, order_goods__good__shop_id=shop_id).count()
+
+            # Отримання суми цін усіх замовлень певного магазину
+            orders_prices_sum = Order.objects.filter(buyer=buyer, order_goods__good__shop_id=shop_id).aggregate(Sum('price'))['price__sum']
+            average_order_price = Order.objects.filter(buyer=buyer, order_goods__good__shop_id=shop_id).aggregate(Avg('price'))['price__avg']
+            # Додавання запису про покупця до датафрейму
+            dataframe.append({
+                'buyer_id': buyer.id,
+                'age': age,
+                'gender': buyer.gender,  
+                'views_count': views_count,
+                'size_cart': cart_count,
+                'order_count': order_count,
+                'orders_prices_sum': orders_prices_sum if orders_prices_sum else 0,  # Якщо сума є None, то 0
+                'average_order_price': average_order_price if average_order_price else 0,
+            })
+        data = pd.DataFrame(dataframe)
+        X_cluster = data[['age', 'views_count', 'size_cart', 'order_count']]
+
+        # Обрання кількості кластерів (можна провести аналіз для вибору оптимальної кількості)
+        num_clusters = 3
+
+        # Модель кластеризації
+        kmeans = KMeans(n_clusters=num_clusters, random_state=42)
+        kmeans.fit(X_cluster)
+
+        # Додавання стовпця з кластерами до даних
+        data['cluster'] = kmeans.labels_
+        # Створення списків для підписів кластерів
+        cluster_labels_age_activity = ['Молоді з високою активністю', 'Середнього віку з помірною активністю', 'Старші з низькою активністю']
+        cluster_labels_order_size = ['Великі замовлення та кошики', 'Помірні замовлення та кошики', 'Невеликі замовлення та кошики']
+        cluster_labels_height_activity = ['Молоді з високим зростом та активністю', 'Середнього віку з помірним зростом та активністю', 'Старші з низьким зростом та активністю']
+
+        # Створення графіка для кожного з типів кластерів
+        plt.figure(figsize=(15, 5))
+
+        # Кластери за віком та активністю покупців
+        plt.subplot(1, 3, 1)
+        for cluster_num in range(num_clusters):
+            cluster_data = data[data['cluster'] == cluster_num]
+            plt.scatter(cluster_data['age'], cluster_data['views_count'], label=cluster_labels_age_activity[cluster_num])
+        plt.xlabel('Age')
+        plt.ylabel('Views Count')
+        plt.title('Clusters by Age and Activity')
+        plt.legend()
+
+        # Кластери за обсягом замовлень та розміром кошика
+        plt.subplot(1, 3, 2)
+        for cluster_num in range(num_clusters):
+            cluster_data = data[data['cluster'] == cluster_num]
+            plt.scatter(cluster_data['order_count'], cluster_data['size_cart'], label=cluster_labels_order_size[cluster_num])
+        plt.xlabel('Order Count')
+        plt.ylabel('Cart Size')
+        plt.title('Clusters by Order Size and Cart Size')
+        plt.legend()
+
+        # Кластери за зростом та активністю покупців
+        plt.subplot(1, 3, 3)
+        for cluster_num in range(num_clusters):
+            cluster_data = data[data['cluster'] == cluster_num]
+            plt.scatter(cluster_data['age'], cluster_data['order_count'], label=cluster_labels_height_activity[cluster_num])
+        plt.xlabel('Age')
+        plt.ylabel('Order Count')
+        plt.title('Clusters by Height and Activity')
+        plt.legend()
+
+        plt.tight_layout()
+        plt.show()
+        return Response(data)
+
+class Analysis(APIView):
+    # permission_classes = (IsAuthenticated, )
+    # authentication_classes = [JWTAuthentication]
+    def get(self, request):
+        static_file_path = settings.STATIC_ROOT + "/Sales_Data_Analysis.csv"
+        data = pd.read_csv(static_file_path)
+
+        # Перетворення колонки "Order Date" в формат дати
+        data['Order Date'] = pd.to_datetime(data['Order Date'])
+
+        # Створення колонки "Day of Week" з днями тижня
+        data['Day'] = data['Order Date'].dt.dayofweek
+
+        # Групування даних за 'Month', 'Day of Week', 'Hour' та обчислення кількості замовлень
+        grouped_data = data.groupby(['Month', 'Day', 'Hour']).size().reset_index(name='Sales Count')
+
+        # Відокремлюємо функції (ознаки) і цільову змінну
+        features = ['Month', 'Day', 'Hour']
+        target = 'Sales Count'
+        X = grouped_data[features]
+        y = grouped_data[target]
+
+        # Кодуємо категоріальні ознаки
+        X = pd.get_dummies(X)
+
+        # Розділяємо дані на навчальний та тестовий набори
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        # Ініціалізуємо та навчаємо модель лінійної регресії
+        model = LinearRegression()
+        model.fit(X_train, y_train)
+
+        # Оцінюємо точність моделі на тестовому наборі
+        accuracy = model.score(X_test, y_test)
+
+        return Response({'label': ['Місяць', 'День', 'Година'], 'x':[X['Month'], X['Day'], X['Hour']], 'y': y, 'accuracy': round(accuracy, 3), 'coefficients': np.round(model.coef_, 3)})

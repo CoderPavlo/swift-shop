@@ -18,11 +18,9 @@ class JWTAuthentication(authentication.BaseAuthentication):
         if not auth_header:
             return None
 
-        if len(auth_header) == 1:
+        elif len(auth_header) == 1 or len(auth_header) > 2:
             return None
-
-        elif len(auth_header) > 2:
-            return None
+        
         prefix = auth_header[0].decode('utf-8')
         token = auth_header[1].decode('utf-8')
 

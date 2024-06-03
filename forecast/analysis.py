@@ -12,14 +12,14 @@ from django.db.models import Sum, Count, F, ExpressionWrapper, FloatField
 
 
 def get_interval(period):
-        # Визначаємо періодичність
-        if period == 0:
-            interval = timedelta(days=1)
-        elif period == 1:
-            interval = timedelta(weeks=1)
-        elif period == 2:
-            interval = timedelta(days=30)  # Приблизно один місяць
-        return interval
+    # Визначаємо періодичність
+    if period == 0:
+        interval = timedelta(days=1)
+    elif period == 1:
+        interval = timedelta(weeks=1)
+    elif period == 2:
+        interval = timedelta(days=30)  # Приблизно один місяць
+    return interval
     
 def get_views(seller_id, interval):
     end_date = timezone.now()-timedelta(days=30)  # Закінчуємо 11.04.2024

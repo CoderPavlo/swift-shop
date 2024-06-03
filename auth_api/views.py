@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from auth_api.models import User
 from good.models import Good
-from .serializers import LoginSerializer, RefreshTokenSerializer, SellerInfoSerializer, UserSerializer
+from .serializers import LoginSerializer, RefreshTokenSerializer, SellerInfoSerializer, UserInfoSerializer, UserSerializer
 from auth_api.authentication import JWTAuthentication
 from django.db.models import Avg
 
@@ -107,3 +107,20 @@ class SellerInfoAPIView(APIView):
         if(serializer.is_valid()):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserInfoAPIView(APIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request):
+        user = request.user
+        if hasattr(user, 'seller'):
+            name=user.seller.name
+        else:
+            name=user.buyer.first_name + ' ' + user.buyer.last_name
+        data = {
+            'avatar': user.avatar.avatar.url if user.avatar else None,
+            'name': name,
+            'email': user.email
+        }
+        return Response(data, status=status.HTTP_200_OK)

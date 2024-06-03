@@ -117,3 +117,8 @@ class SellerIdSerializer(serializers.Serializer):
     class Meta:
         model = Seller
         fields = ['id', 'name', 'avatar']
+
+class UserInfoSerializer(serializers.Serializer):
+    avatar = serializers.CharField(max_length=255)
+    name = serializers.CharField(max_length=255)
+    email = serializers.CharField(max_length=255)

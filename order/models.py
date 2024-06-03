@@ -16,7 +16,7 @@ class Cart(models.Model):
     buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, related_name='buyer', unique=False)
     good = models.ForeignKey(Good, on_delete=models.CASCADE, related_name='cart_good', unique=False)
     count = models.IntegerField(default=1)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.buyer.first_name + ' - ' + self.good.name
@@ -43,7 +43,7 @@ class Order(models.Model):
     buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, related_name='order_buyer', unique=False)
     order_goods = models.ManyToManyField(OrderGood)
     promocode = models.ForeignKey(Promocode, on_delete=models.CASCADE, related_name='order_promocode', unique=False, blank=True, null=True)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateTimeField(auto_now_add=True)
     price = models.FloatField()
     STATUS_CHOICES = [
         (0, 'PROCESSING'),
