@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { baseUrl } from './baseUrl';
 import prepareHeaders from './prepareHeaders';
-import {ICart, IGroupedCarts, ICartOrderData} from '../../models/IOrder';
+import {ICart, IGroupedCarts, ICartOrderData, IOrder} from '../../models/IOrder';
 import { IPagination } from '../../models/IGood';
 
 export const orderAPI = createApi({
@@ -41,6 +41,14 @@ export const orderAPI = createApi({
                 body: data,
             }),
             invalidatesTags: ['Cart', 'Order'],
+        }),
+        fetchOrdersForBuyer: build.query<IPagination<IOrder>, number>({
+            query: (page) => {
+                return {
+                    url: `orders/?page=${page}`,
+                };
+            },
+            providesTags: ['Order'],
         }),
 
     })

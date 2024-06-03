@@ -2,9 +2,9 @@ import React from 'react'
 import { Button, Grid, InputAdornment, Stack, TextField, Typography } from '@mui/material'
 import GoodCard from '../cards/GoodCard'
 import { Message } from '@mui/icons-material';
-import { IGoods } from '../../../models/IGood';
+import { IGoodCardData } from '../../../models/IGood';
 interface IOrdersListProps {
-  goods: IGoods[],
+  goods: IGoodCardData[],
   type: 'buyer' | 'seller',
   total?: number,
   status: number,

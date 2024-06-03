@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, Card, Typography, CardMedia, CardContent, Stack, Rating, Tooltip, IconButton, Button } from '@mui/material'
+import { Grid, Card, Typography, CardMedia, CardContent, Stack, Button } from '@mui/material'
 import { Link } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
 import { Delete, Edit } from '@mui/icons-material'
@@ -65,15 +65,12 @@ export default function GoodCard({ type, good, editClick, deleteClick }: IGoodCa
                         }
                         {type === 'order' &&
                             <>
-                                <Typography variant='body2' color='secondary' marginBlock={1}>
-                                    Специфікація
-                                </Typography>
                                 <Stack direction='row'>
                                     <Typography variant='body1' color='text'>
                                         {'$ ' + good.price}
                                     </Typography>
                                     <Typography variant='body1' color='secondary' ml={2}>
-                                        {'x' + '2'}
+                                        {'x' + good.count}
                                     </Typography>
                                 </Stack>
                             </>

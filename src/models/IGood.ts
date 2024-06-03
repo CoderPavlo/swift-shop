@@ -40,10 +40,10 @@ export interface IGoodCardData {
     id: number,
     name: string,
     image: string,
-    description: string,
+    description?: string,
     price: number,
     discount: number,
-    rating: number,
+    rating?: number,
     count: number,
 }
 

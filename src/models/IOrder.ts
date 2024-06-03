@@ -22,12 +22,28 @@ export interface IGroupedCarts {
     carts: ICartDetail[],
 }
 
-export interface ICartOrderData{
+export interface ICartOrderData {
     goods: ICartOrders[],
-    promocode_id?: number, 
-} 
+    promocode_id?: number,
+}
 
-export interface ICartOrders{
+export interface ICartOrders {
     carts_id: number[],
     counts: number[],
+}
+
+export interface IPromocode {
+    code: string,
+    start_date: string,
+    end_date: string,
+    discount: number,
+}
+export interface IOrder {
+    id: number,
+    date: string,
+    price: number,
+    status: number,
+    promocode: IPromocode | null,
+    order_goods: IGoodCardData[],
+    shop?: ISellerMini,
 }

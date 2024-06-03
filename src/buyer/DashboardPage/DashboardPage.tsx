@@ -1,11 +1,11 @@
-import { Box, Button, Card, CardContent, Divider, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Stack, SvgIconTypeMap, Tooltip, Typography } from '@mui/material'
+import { Box, Card, CardContent, FormControl, Grid, MenuItem, Paper, Select, Stack, SvgIconTypeMap, Typography } from '@mui/material'
 import React from 'react'
-import { Visibility, Store, ViewInAr, Payment, ArrowDropUp, ArrowDropDown, NavigateNext } from '@mui/icons-material';
+import { Visibility, Store, ViewInAr, Payment, ArrowDropUp, ArrowDropDown } from '@mui/icons-material';
 import { OverridableComponent } from '@mui/material/OverridableComponent';
 import { useTheme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 import { alpha } from '@mui/material/styles';
-import OrdersList from '../../general/components/orders/OrdersList';
+import Orders from './components/Orders';
 interface IStat {
   Icon: OverridableComponent<SvgIconTypeMap<{}, "svg">> & { muiName: string; },
   label: string,
@@ -234,105 +234,7 @@ export default function DashboardPage() {
           )}
         </Box>
       </Grid>
-      <Grid item xs={12}>
-        <Stack display='flex' justifyContent="space-between" flexDirection="row" paddingBottom={1}>
-          <Typography variant="subtitle1" color="primary" textTransform='uppercase'>
-            Замовлення
-          </Typography>
-          <Typography variant='subtitle1' component={Link} to="/orders" color="secondary">
-            Всі
-          </Typography>
-        </Stack>
-        {/* {orders.map((item, index) =>
-          <Box key={index} marginBlock={1} paddingBlock={1} paddingInline={2} sx={{ background: theme.palette.background.paper }}>
-            <Stack direction='row' display='flex' justifyContent='space-between' alignItems='center'>
-              <Typography variant='subtitle1' sx={{ color: orderTypes[item.status].color }}>
-                {orderTypes[item.status].label}
-              </Typography>
-              <Stack direction='column'>
-                <Typography variant='body2' color='secondary'>
-                  {'Дата: ' + item.date.toISOString().slice(0, 10)}
-                </Typography>
-                <Typography variant='body2' color='secondary'>
-                  {'Id: ' + item.id}
-                </Typography>
-              </Stack>
-            </Stack>
-            <Divider />
-            <Typography component={Link} to={`/shop/${item.shopId}`} variant='subtitle1' sx={{ mt: 1, display: 'flex', alignItems: 'center', color: theme.palette.text.primary, textDecoration: 'none' }}>
-              {item.shop}
-              <NavigateNext />
-            </Typography>
-            <OrdersList type='buyer' goods={item.goods} total={item.total} status={item.status}/>
-            {/* <Grid container>
-              <Grid item xs={12} sm={8} container display='flex' alignItems='center'>
-                {item.goods.length === 1 ?
-                  <>
-                    <Grid item xs={3}>
-                      <img src={item.goods[0].image} alt={item.goods[0].name} style={{ maxWidth: '100%' }} />
-                    </Grid>
-                    <Grid item xs={9} display='flex' justifyContent='center' flexDirection='row' alignItems='center'>
-                      <Stack>
-                        <Typography variant='body1' color='text'>
-                          {item.goods[0].name}
-                        </Typography>
-                        <Typography variant='body2' color='secondary' mt={{ xs: 1, md: 2 }}>
-                          Специфікація
-                        </Typography>
-                        <Stack direction='row' mt={{ xs: 1, md: 2 }}>
-                          <Typography variant='body1' color='text'>
-                            {'$ ' + item.goods[0].price}
-                          </Typography>
-                          <Typography variant='body1' color='secondary' ml={2}>
-                            {'x' + '2'}
-                          </Typography>
-                        </Stack>
-                      </Stack>
-                    </Grid>
-                  </>
-                  :
-                  <>
-                    {item.goods.map((good, goodIndex) =>
-                      <Grid item xs={3} key={goodIndex}>
-                        <Tooltip title={good.name + ' $' + good.price + ' x' + '2'}>
-                          <img src={good.image} alt={good.name} style={{ maxWidth: '100%' }} />
-                        </Tooltip>
-                      </Grid>
-                    )}
-                  </>
-                }
-              </Grid>
-              <Grid item xs={12} sm={4} display='flex' flexDirection={{ xs: 'row', sm: 'column' }} justifyContent={{ xs: 'space-between', sm: 'center' }} alignItems='center'>
-                <Stack direction={{ xs: 'column', sm: 'row' }}>
-                  <Typography variant='h6' color='text'>
-                    {'Загалом: '}
-                  </Typography>
-                  <Typography variant='h6' color='text' textAlign='center' ml={{ sm: 1 }}>
-                    {' $ ' + item.total}
-                  </Typography>
-                </Stack>
-                <Stack direction={{ xs: 'row', sm: 'column' }} mt={{ sm: 2 }}>
-                  <Button variant='outlined' fullWidth sx={{ ml: { xs: 1, sm: 0 } }}>
-                    Додати до корзини
-                  </Button>
-                  <Button variant='contained' fullWidth sx={{ mt: { sm: 1 }, ml: { xs: 1, sm: 0 } }}>
-                    {item.status === 3 ?
-                      <>
-                        Видалити
-                      </>
-                      :
-                      <>
-                        Підтвердити отримання
-                      </>
-                    }
-
-                  </Button>
-                </Stack>
-              </Grid>
-            </Grid> 
-          </Box>
-        )} */}
-      </Grid>
+      <Orders/>
     </Grid>
   )
 }
