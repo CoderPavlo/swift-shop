@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { baseUrl } from './baseUrl';
 import prepareHeaders from './prepareHeaders';
-import { ICategoryStatistics, IGoodStatistics, IStatistics} from '../../models/IStatistics';
+import { ICategoryStatistics, IGoodStatistics, IInfluencingFactors, IStatistics} from '../../models/IStatistics';
 
 export const forecastAPI = createApi({
     reducerPath: 'forecastAPI',
@@ -36,6 +36,13 @@ export const forecastAPI = createApi({
             query: (period) => {
                 return {
                     url: `additionalStatistics/?period=${period}`,
+                };
+            },
+        }),
+        fetchInfluencingFactors: build.query<IInfluencingFactors, void>({
+            query: () => {
+                return {
+                    url: `analysis/`,
                 };
             },
         }),

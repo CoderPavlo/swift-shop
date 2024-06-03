@@ -54,6 +54,15 @@ export interface IGoodFilterForShop {
     page: number,
 }
 
+export interface IGoodFilterForBuyer {
+    categoryId: number,
+    searchQuery: string,
+    order?: boolean,
+    page: number,
+    priceFrom?: number,
+    priceTo?: number,
+}
+
 export interface IGoodFilterHome {
     tab: string;
     page: string;
@@ -82,3 +91,4 @@ export interface IGoodByIdForEdit {
     categories: ISubCategory[],
     tags: ITag[],
 }
+

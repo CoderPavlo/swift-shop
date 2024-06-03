@@ -7,10 +7,11 @@ import Profile from '../../general/menus/Profile';
 import Notifications from '../../general/menus/Notifications';
 import GeneralNavbar from '../../general/Navbar/GeneralNavbar';
 import { pages } from './data/pages';
+import { useAppSelector } from '../../store/hooks';
 
 export default function Navbar(): React.JSX.Element {
   const [openSettings, setOpenSettings] = React.useState<boolean>(false);
-
+  const { role } = useAppSelector(state => state.authReducer);
   const handleSettingsOpen = (open: boolean) => (
     event: React.KeyboardEvent | React.MouseEvent
   ) => {
@@ -26,22 +27,29 @@ export default function Navbar(): React.JSX.Element {
 
   return (
     <GeneralNavbar pages={pages}>
-      <Search />
+
+      <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+        <Search />
+      </Box>
       <Box sx={{ display: 'flex' }}>
 
         <Notifications />
         <Profile />
-        <IconButton
-          size="large"
-          edge="end"
-          aria-label="settings"
-          color="secondary"
-          onClick={handleSettingsOpen(true)}
-        >
-          <Settings />
-        </IconButton>
+        {!role &&
+          <IconButton
+            size="large"
+            edge="end"
+            aria-label="settings"
+            color="secondary"
+            onClick={handleSettingsOpen(true)}
+          >
+            <Settings />
+          </IconButton>
+        }
       </Box>
-      <SettingsDrawer open={openSettings} handleSettingsOpen={handleSettingsOpen}/>
-    </GeneralNavbar>
+      {!role &&
+        <SettingsDrawer open={openSettings} handleSettingsOpen={handleSettingsOpen} />
+      }
+    </GeneralNavbar >
   )
 }

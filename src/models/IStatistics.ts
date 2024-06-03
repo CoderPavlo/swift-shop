@@ -26,3 +26,11 @@ export interface IGoodStatistics {
     orders_goods: number[],
 
 }
+
+export interface IInfluencingFactors {
+    x: number[][],
+    y: number[],
+    accuracy: number,
+    coefficients: number[],
+    label: string[],
+}

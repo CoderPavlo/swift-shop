@@ -28,7 +28,7 @@ function Logo({size, sx}:ILogoProps): React.JSX.Element {
                 </g>
             </svg>
             </>
-            <Typography variant={size==="large" ? "h3" : "h5"} color='text' ml="4px">
+            <Typography variant={size==="large" ? "h3" : "h5"} display={{xs: 'none', sm: 'block'}} color='text' ml="4px">
                 SwiftShop
             </Typography>
 

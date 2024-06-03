@@ -9,6 +9,7 @@ import HomePage from "./HomePage/HomePage";
 import HomeSkeleton from "./HomePage/HomeSkeleton";
 import ProfilePage from "./ProfilePage/ProfilePage";
 import { IRoute } from "../App";
+import SearchPage from "./SearchPage/SearchPage";
 
 export const routes: IRoute[] = [
     {
@@ -38,6 +39,10 @@ export const routes: IRoute[] = [
             {
                 path: 'goods/:id',
                 element: <GoodPage />,
+            },
+            {
+                path: 'search/',
+                element: <SearchPage />,
             },
 
         ]

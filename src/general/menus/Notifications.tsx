@@ -57,7 +57,7 @@ export default function Notifications() {
                 color="secondary"
                 onClick={()=>setOpen(value=>!value)}
             >
-                <Badge badgeContent={17} color="error">
+                <Badge badgeContent={1} color="error">
                     <NotificationsIcon />
                 </Badge>
             </IconButton>

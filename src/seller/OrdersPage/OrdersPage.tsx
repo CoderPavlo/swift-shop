@@ -2,7 +2,6 @@ import {ExpandMore } from '@mui/icons-material'
 import { Stack, Typography, Checkbox, FormControlLabel, Accordion, AccordionDetails, AccordionSummary, Box, } from '@mui/material'
 import React from 'react'
 import { useTheme } from '@mui/material/styles'
-import { orders } from '../../db/order/order';
 import { orderTypes } from '../../general/settings/orderTypes';
 import OrdersList from '../../general/components/orders/OrdersList';
 
@@ -33,7 +32,7 @@ export default function OrdersPage() {
                     </Typography>
                 </Stack>
             </Box>
-            {orders.map((item, index) =>
+            {/* {orders.map((item, index) =>
                 <Accordion key={index} sx={{ background: theme.palette.background.paper }} expanded={expandedPanel===item.id} onChange={(e, newExpanded)=>setExpandedPanel(newExpanded ? item.id : undefined)}>
                     <AccordionSummary
                         expandIcon={<ExpandMore />}
@@ -58,7 +57,7 @@ export default function OrdersPage() {
                         <OrdersList type='seller' goods={item.goods} status={item.status}/>
                     </AccordionDetails>
                 </Accordion>
-            )}
+            )} */}
         </>
     )
 }

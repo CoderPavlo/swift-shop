@@ -1,3 +1,4 @@
+import React from 'react';
 import { IRoute } from "../../App";
 import { ERole } from "../../models/IUser";
 import AuthPage from "./components/AuthPage";

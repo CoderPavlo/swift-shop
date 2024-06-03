@@ -10,6 +10,8 @@ import MainCard from './MainCard';
 import { Logout, Person, Settings } from '@mui/icons-material/';
 import ProfileTab from './ProfileTab';
 import SettingsTab from './SettingsTab';
+import { authAPI } from '../../store/services/authAPI';
+import { baseUrl } from '../../store/services/baseUrl';
 
 interface ITabPanelProps {
     children: React.ReactNode,
@@ -39,11 +41,12 @@ export default function Profile() {
     const theme = useTheme();
 
     const [value, setValue] = React.useState<number>(0);
+    const {data} = authAPI.useGetUserInfoQuery();
 
     return (
         <>
             <ButtonBase onClick={() => setOpen((value) => !value)} sx={{ ml: 1, borderRadius: '100px' }}>
-                <Avatar />
+                <Avatar src={baseUrl + data?.avatar} alt={data?.name}/>
             </ButtonBase>
 
             <Popper
@@ -84,11 +87,11 @@ export default function Profile() {
                                             <Grid container justifyContent="space-between" alignItems="center">
                                                 <Grid item>
                                                     <Stack direction="row" spacing={1.25} alignItems="center">
-                                                        <Avatar alt="profile user" sx={{ width: 32, height: 32 }} />
+                                                        <Avatar src={baseUrl + data?.avatar} alt={data?.name} sx={{ width: 32, height: 32 }} />
                                                         <Stack>
-                                                            <Typography variant="h6">John Doe</Typography>
+                                                            <Typography variant="h6">{data?.name}</Typography>
                                                             <Typography variant="body2" color="textSecondary">
-                                                                UI/UX Designer
+                                                                {data?.email}
                                                             </Typography>
                                                         </Stack>
                                                     </Stack>

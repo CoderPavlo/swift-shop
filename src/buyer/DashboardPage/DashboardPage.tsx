@@ -5,7 +5,6 @@ import { OverridableComponent } from '@mui/material/OverridableComponent';
 import { useTheme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 import { alpha } from '@mui/material/styles';
-import { orders } from '../../db/order/order';
 import OrdersList from '../../general/components/orders/OrdersList';
 interface IStat {
   Icon: OverridableComponent<SvgIconTypeMap<{}, "svg">> & { muiName: string; },
@@ -244,7 +243,7 @@ export default function DashboardPage() {
             Всі
           </Typography>
         </Stack>
-        {orders.map((item, index) =>
+        {/* {orders.map((item, index) =>
           <Box key={index} marginBlock={1} paddingBlock={1} paddingInline={2} sx={{ background: theme.palette.background.paper }}>
             <Stack direction='row' display='flex' justifyContent='space-between' alignItems='center'>
               <Typography variant='subtitle1' sx={{ color: orderTypes[item.status].color }}>
@@ -330,9 +329,9 @@ export default function DashboardPage() {
                   </Button>
                 </Stack>
               </Grid>
-            </Grid> */}
+            </Grid> 
           </Box>
-        )}
+        )} */}
       </Grid>
     </Grid>
   )

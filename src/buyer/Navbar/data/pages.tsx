@@ -1,3 +1,4 @@
+import React from 'react';
 import { ISetting } from "../../../general/settings/settings";
 import {HomeOutlined, AppsOutlined, ShoppingCartOutlined, InsertChartOutlined, ManageAccountsOutlined} from '@mui/icons-material';
 

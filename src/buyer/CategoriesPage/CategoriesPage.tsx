@@ -35,7 +35,7 @@ export default function CategoriesPage(): React.JSX.Element {
                                 <Grid container spacing={2}>
                                     {category.subcategories.map((subcategory, j) =>
                                         <Grid item xs={4} md={2.4}>
-                                            <Link to={`/subcategories/${subcategory.id}`} style={{ textDecoration: 'none' }}>
+                                            <Link to={`/search/?category=${subcategory.id}`} style={{ textDecoration: 'none' }}>
                                                 <Card sx={{
                                                     borderRadius: '10px', background: 'transparent',
                                                     '&:hover': {

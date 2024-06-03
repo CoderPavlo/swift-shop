@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { baseUrl } from './baseUrl';
-import { IGood, IGoodByIdForEdit, IGoodCardData, IGoodFilterForShop, IGoodFilterHome, IGoods, IPagination, ITag } from '../../models/IGood';
+import { IGood, IGoodByIdForEdit, IGoodCardData, IGoodFilterForBuyer, IGoodFilterForShop, IGoodFilterHome, IGoods, IPagination, ITag } from '../../models/IGood';
 import prepareHeaders from './prepareHeaders';
 
 
@@ -124,6 +124,20 @@ export const goodAPI = createApi({
                 };
             },
             providesTags: ['Good'],
+        }),
+        fetchSearchHistory: build.query<string[], string>({
+            query: (query) => {
+                return {
+                    url: `searchHistory/?query=${query}`,
+                };
+            },
+        }),
+        fetchSearch: build.query<IPagination<IGoodCardData>, IGoodFilterForBuyer>({
+            query: (filter) => {
+                return {
+                    url: `search/?query=${filter.searchQuery}&category=${filter.categoryId}&order=${filter.order?filter.order:""}&priceFrom=${filter.priceFrom?filter.priceFrom:""}&priceTo=${filter.priceTo?filter.priceTo:""}&page=${filter.page}`,
+                };
+            },
         }),
     })
 })

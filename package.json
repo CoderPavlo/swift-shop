@@ -46,7 +46,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "jest --verbose",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -68,7 +68,9 @@
     ]
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.24.1",
     "@types/js-cookie": "^3.0.6",
-    "@types/react-slick": "^0.23.13"
+    "@types/react-slick": "^0.23.13",
+    "ts-jest": "^29.1.2"
   }
 }

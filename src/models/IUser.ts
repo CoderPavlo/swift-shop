@@ -28,7 +28,11 @@ interface IBuyer {
     year: number;
     gender: number;
 }
-
+export interface IUserInfo {
+    name: string,
+    email: string,
+    avatar: string,
+}
 export interface ISeller {
     id?: number;
     name: string;

@@ -19,7 +19,6 @@ export default function GeneralNavbar({ pages, children }: INavbarProps): React.
             <AppBar position="fixed" sx={{ background: { xs: theme.palette.background.paper, sm: "transparent" } }} elevation={0}>
                 <Toolbar sx={{ marginInline: '8px', paddingInline: '8px', background: theme.palette.background.paper, borderRadius: '50px', top: { sm: '8px' }, height: '60px' }}>
                     <Logo size="small" />
-                    <Box sx={{ flexGrow: 1 }} />
                     {children}
                 </Toolbar>
             </AppBar>

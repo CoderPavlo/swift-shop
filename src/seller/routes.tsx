@@ -1,3 +1,4 @@
+import React from 'react';
 import { IRoute } from "../App";
 import DashboardPage from "./DashboardPage/DashboardPage";
 import GoodsPage from "./GoodsPage/GoodsPage";

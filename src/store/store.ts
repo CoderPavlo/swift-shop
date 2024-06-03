@@ -7,6 +7,7 @@ import { orderAPI } from "./services/orderAPI";
 import { forecastAPI } from "./services/forecastAPI";
 
 const rootReducer = combineReducers({
+    // themeModeReducer,
     authReducer,
     [authAPI.reducerPath]: authAPI.reducer,
     [categoriesAPI.reducerPath]: categoriesAPI.reducer,

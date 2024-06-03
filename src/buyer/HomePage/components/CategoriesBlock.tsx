@@ -122,7 +122,7 @@ export default function CategoriesBlock(): React.JSX.Element {
             <Slider {...settings}>
               {categories?.map(category =>
                 <div key={category.id}>
-                  <Link to={`/subcategories/${category.id}`} style={{ textDecoration: 'none' }}>
+                  <Link to={`/search/?category=${category.id}`} style={{ textDecoration: 'none' }}>
                     <Card sx={{
                       borderRadius: '10px', background: 'transparent', marginInline: '10px',
                       '&:hover': {

@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { IAuth, IUser, ISeller } from '../../models/IUser'
+import { IAuth, IUser, ISeller, IUserInfo } from '../../models/IUser'
 import { baseUrl } from './baseUrl';
 import prepareHeaders from './prepareHeaders';
 
@@ -56,6 +56,14 @@ export const authAPI = createApi({
             query: () => {
                 return {
                     url: 'seller/',
+                };
+            },
+
+        }),
+        getUserInfo: build.query<IUserInfo, void>({
+            query: () => {
+                return {
+                    url: 'userInfo/',
                 };
             },
 
