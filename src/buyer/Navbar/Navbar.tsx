@@ -1,17 +1,19 @@
 import React from 'react'
-import { Box, IconButton, } from '@mui/material';
+import { Box, Button, IconButton, } from '@mui/material';
 import Search from './components/Search';
-import { Settings, } from '@mui/icons-material';
+import { Login, Settings, } from '@mui/icons-material';
 import SettingsDrawer from './components/SettingsDrawer';
 import Profile from '../../general/menus/Profile';
 import Notifications from '../../general/menus/Notifications';
 import GeneralNavbar from '../../general/Navbar/GeneralNavbar';
 import { pages } from './data/pages';
 import { useAppSelector } from '../../store/hooks';
+import { useNavigate } from 'react-router';
 
 export default function Navbar(): React.JSX.Element {
   const [openSettings, setOpenSettings] = React.useState<boolean>(false);
   const { role } = useAppSelector(state => state.authReducer);
+  const navigate = useNavigate();
   const handleSettingsOpen = (open: boolean) => (
     event: React.KeyboardEvent | React.MouseEvent
   ) => {
@@ -32,19 +34,32 @@ export default function Navbar(): React.JSX.Element {
         <Search />
       </Box>
       <Box sx={{ display: 'flex' }}>
-
-        <Notifications />
-        <Profile />
-        {!role &&
-          <IconButton
-            size="large"
-            edge="end"
-            aria-label="settings"
-            color="secondary"
-            onClick={handleSettingsOpen(true)}
-          >
-            <Settings />
-          </IconButton>
+        {role ?
+          <>
+            <Notifications />
+            <Profile />
+          </> :
+          <>
+            <Button variant="outlined" startIcon={<Login />} onClick={() => navigate('/login')}
+              sx={{
+                fontSize: {
+                  xs: 0,
+                  md: '0.875rem'
+                }
+              }}
+            >
+              Ввійти
+            </Button>
+            <IconButton
+              size="large"
+              edge="end"
+              aria-label="settings"
+              color="secondary"
+              onClick={handleSettingsOpen(true)}
+            >
+              <Settings />
+            </IconButton>
+          </>
         }
       </Box>
       {!role &&

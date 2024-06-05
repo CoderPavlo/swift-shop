@@ -4,7 +4,7 @@ import { ERole } from "../../models/IUser";
 import AuthPage from "./components/AuthPage";
 import LoginPage from "./LoginPage";
 import RegisterPage, { RegisterCard } from "./RegisterPage";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 
 export const routes: IRoute[] = [

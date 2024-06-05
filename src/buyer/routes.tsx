@@ -48,3 +48,25 @@ export const routes: IRoute[] = [
         ]
     },
 ]
+
+export const unAuthRoutes: IRoute[] = [
+    {
+        path: '/',
+        element: <Suspense fallback={<NavbarSkeleton />}><Navbar /></Suspense>,
+        childrenRoutes: [
+            {
+                path: '/',
+                element: <Suspense fallback={<HomeSkeleton />}><HomePage /></Suspense>,
+            },
+            {
+                path: 'goods/:id',
+                element: <GoodPage />,
+            },
+            {
+                path: 'search/',
+                element: <SearchPage />,
+            },
+
+        ]
+    },
+]

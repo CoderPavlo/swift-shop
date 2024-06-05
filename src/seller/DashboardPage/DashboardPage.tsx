@@ -80,14 +80,10 @@ export default function DashboardPage() {
             }
           </>
         }
-
       </Grid>
-
       {tab===ETabs.GENERAL && <GeneralStatistics period={period}/>}
       {tab===ETabs.GOODS && <GoodsStatistics period={period}/>}
       {tab===ETabs.INFLUENCE && <InfluencingFactors />}
-
-
     </Grid>
   )
 }

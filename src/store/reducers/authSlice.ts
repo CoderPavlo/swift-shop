@@ -1,4 +1,4 @@
-import { Action, Dispatch, PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import Cookies from 'js-cookie';
 import { IAuth } from '../../models/IUser';
 import axios from 'axios';
@@ -6,7 +6,6 @@ import { baseUrl } from '../services/baseUrl';
 
 
 export const saveTokens = (auth: IAuth) => {
-  // Store tokens in cookies with expiration times
   const accessExpiration = new Date();
   accessExpiration.setTime(accessExpiration.getTime() + 15 * 60 * 1000); // 15 minutes
   Cookies.set('accessToken', auth.access_token, { expires: accessExpiration });
@@ -36,9 +35,6 @@ export const getRole = async () : Promise<string | undefined> => {
   }
   return role;
 }
-// const initialState = {
-//   role: await getRole(),
-// };
 
 export const authSlice = createSlice({
   name: 'auth',
@@ -59,32 +55,6 @@ export const authSlice = createSlice({
       Cookies.remove('refreshToken');
     }
   },
-});
-
-export const updateTokens = (): ((dispatch: Dispatch<Action>) => Promise<string | undefined>) => async (dispatch: Dispatch<Action>) => new Promise((resolve, reject) => {
-  let access_token = Cookies.get('accessToken');
-  let refresh_token = Cookies.get('refreshToken');
-
-  if (!access_token && refresh_token) {
-    axios.post(baseUrl + '/auth/refresh/', {
-      refresh_token: refresh_token
-    })
-      .then((response) => {
-        let auth = response.data as IAuth;
-        dispatch(setTokens(auth));
-        resolve(auth.access_token);
-      })
-      .catch((error) => {
-        resolve(undefined);
-      });
-  }
-  else if (!access_token && !refresh_token) {
-    dispatch(clearTokens());
-    resolve(undefined); // No access token available
-  }
-  else {
-    resolve(access_token); // Access token already available
-  }
 });
 
 export const { setTokens, clearTokens } = authSlice.actions;
