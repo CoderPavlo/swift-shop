@@ -406,8 +406,8 @@ class BuyerSegmentation(APIView):
         return Response(data)
 
 class Analysis(APIView):
-    # permission_classes = (IsAuthenticated, )
-    # authentication_classes = [JWTAuthentication]
+    permission_classes = (IsAuthenticated, )
+    authentication_classes = [JWTAuthentication]
     def get(self, request):
         static_file_path = settings.STATIC_ROOT + "/Sales_Data_Analysis.csv"
         data = pd.read_csv(static_file_path)

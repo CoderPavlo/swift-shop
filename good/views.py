@@ -1,4 +1,5 @@
 import os
+from random import shuffle
 from rest_framework.views import APIView
 from auth_api.authentication import JWTAuthentication
 from forecast.models import View
@@ -131,7 +132,7 @@ class GoodByShopAllInfo(APIView):
     
 class GoodForUserGetAPIView(APIView):
     serializer_class = GoodCardDataSerializer
-    permission_classes = (AllowAny, IsAuthenticated)
+    permission_classes = (AllowAny, )
     authentication_classes = [JWTAuthentication]
 
     def get_recommended_goods(self, id):
@@ -176,7 +177,11 @@ class GoodForUserGetAPIView(APIView):
         tab = self.request.query_params.get('tab')
         
         if tab == '0':
-            goods = self.get_recommended_goods(request.user.buyer.id)
+            if hasattr(request.user, 'buyer'):
+                goods = self.get_recommended_goods(request.user.buyer.id)
+            else:
+                goods = list(Good.objects.all())
+                shuffle(goods)
         elif tab=='1':
             goods = Good.objects.annotate(view_count=Count('good_view')).order_by('-view_count')
         else:
@@ -186,25 +191,30 @@ class GoodForUserGetAPIView(APIView):
         
 class GoodForUserAllInfo(APIView):
     serializer_class = GoodListSerializer
-    permission_classes = (AllowAny, IsAuthenticated, )
+    permission_classes = (AllowAny, )
     authentication_classes = [JWTAuthentication]
 
     def get(self, request, id):
         good = Good.objects.get(id=id)
-        if request.user.buyer:
+        if hasattr(request.user, 'buyer'):
             data={
                 'buyer': request.user.buyer.id,
                 'good': good.id,
             }
-            serializer = ViewSerializer(data=data)
-            serializer.is_valid(raise_exception=True)      
-            serializer.save()
+        else:
+            data={
+                'buyer': None,
+                'good': good.id,
+            }
+        serializer = ViewSerializer(data=data)
+        serializer.is_valid(raise_exception=True)      
+        serializer.save()
         serializer = self.serializer_class(good)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class SimilarGoodAPIView(APIView):
     serializer_class = GoodCardDataSerializer
-    permission_classes = (AllowAny, IsAuthenticated, )
+    permission_classes = (AllowAny, )
     authentication_classes = [JWTAuthentication]
 
     def get(self, request):
@@ -260,7 +270,7 @@ class SearchHistoryAPIView(APIView):
         return Response(search_history_queries, status=status.HTTP_200_OK)
     
 class SearchAPIView(APIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (AllowAny, )
     authentication_classes = [JWTAuthentication]
     serializer_class = GoodCardDataSerializer
 
@@ -275,16 +285,14 @@ class SearchAPIView(APIView):
         queryset = Good.objects.all()
         # Фільтруємо за текстовим запитом
         if query!="":
-            existing_search_history = SearchHistory.objects.filter(user=request.user.id, query=query).exists()
-            print(1)
-            if not existing_search_history:
-                # Якщо такого запису ще немає, зберігаємо його
-                search_history_ser = SearchHistorySerializer(data={'query': query, 'user': request.user.id})
-                search_history_ser.is_valid(raise_exception=True)
-                print(2)
-                search_history_ser.save()
+            if hasattr(request.user, 'buyer'):
+                existing_search_history = SearchHistory.objects.filter(user=request.user.id, query=query).exists()
+                if not existing_search_history:
+                    # Якщо такого запису ще немає, зберігаємо його
+                    search_history_ser = SearchHistorySerializer(data={'query': query, 'user': request.user.id})
+                    search_history_ser.is_valid(raise_exception=True)
+                    search_history_ser.save()
             queryset = queryset.filter(Q(description__icontains=query) | Q(name__icontains=query))
-        print(3)
 
         # Фільтруємо за категорією, якщо вона вказана
         if category!=-1:

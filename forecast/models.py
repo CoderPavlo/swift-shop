@@ -4,7 +4,7 @@ from auth_api.models import Buyer
 from good.models import Good
 
 class View(models.Model):
-    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, related_name='buyer_view', unique=False)
+    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, related_name='buyer_view', unique=False, blank=True, null=True)
     good = models.ForeignKey(Good, on_delete=models.CASCADE, related_name='good_view', unique=False)
     date = models.DateTimeField(auto_now_add=True)
 

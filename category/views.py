@@ -44,7 +44,7 @@ class SubCategoryAPIView(APIView):
 
 
 class SubCategoryGetAPIView(APIView):
-    permission_classes = (AllowAny, IsAuthenticated)
+    permission_classes = (AllowAny, )
     authentication_classes = [JWTAuthentication]
     serializer_class = SubCategoryListSerializer
 
