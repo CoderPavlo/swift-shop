@@ -1,5 +1,5 @@
 import { Add, Delete } from '@mui/icons-material'
-import { Alert, AlertTitle, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel, MenuItem, Pagination, Select, Skeleton, Stack, TextField, Typography } from '@mui/material'
+import { Alert, AlertTitle, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel, MenuItem, Pagination, Select, Skeleton, Stack, TextField, Typography } from '@mui/material'
 import React from 'react'
 // import { goods } from '../../db/goods/goods';
 import GoodCard from '../../general/components/cards/GoodCard';
@@ -13,6 +13,7 @@ import SwapVertIcon from './components/SwapVertIcon';
 import { useTheme } from '@mui/material/styles';
 import { LoadingButton } from '@mui/lab';
 import { baseUrl } from '../../store/services/baseUrl';
+import Loading from '../../general/components/Loading';
 
 export default function GoodsPage() {
     const theme = useTheme();
@@ -20,7 +21,7 @@ export default function GoodsPage() {
     const [filter, setFilter] = React.useState<IGoodFilterForShop>({ categoryId: -1, searchQuery: '', order: true, page: 1 });
     const [goodProcessing, setGoodProcessing] = React.useState<{ action: 'add' | 'edit' | 'delete' | null, id: number }>({ action: null, id: -1 });
     const [editId, setEditId] = React.useState<number>(-1);
-    const { data: categories, error: categoriesError, isLoading: categoriesLoading } = categoriesAPI.useFetchSubCategoriesByShopQuery();
+    const { data: categories, error: categoriesError, isFetching: categoriesLoading, refetch: categoriesRefetch } = categoriesAPI.useFetchSubCategoriesByShopQuery();
     const { data: goods, error: goodsError, isFetching: goodsLoading, refetch: goodsRefetch } = goodAPI.useFetchGoodsByShopQuery(filter, { refetchOnMountOrArgChange: false });
     const [deleteGood, { error: deleteError, isLoading: deleteLoading }] = goodAPI.useDeleteGoodMutation();
     const { data: goodForChange, error: goodForChangeError, isLoading: goodForChangeLoading } = goodAPI.useFetchGoodByIdForEditQuery(editId, { refetchOnMountOrArgChange: true });
@@ -37,7 +38,7 @@ export default function GoodsPage() {
                 behavior: 'smooth'
             });
         }
-        else if ((new Date).getTime() - startTime.getTime() > 500) {
+        else if ((new Date()).getTime() - startTime.getTime() > 500) {
 
             clearTimeout(typingTimer);
             typingTimer = setTimeout(() =>
@@ -71,76 +72,72 @@ export default function GoodsPage() {
                     Створити новий
                 </Button>
             </Stack>
-            {categoriesLoading ?
-
-                <Skeleton variant="rectangular" height='40px' sx={{ marginBlock: 1 }} />
-                : categoriesError ?
-                    <Box height='56px' display='flex' justifyContent="center" alignItems='center'>
-                        <Typography variant='subtitle1' color='error' textAlign='center'>
-                            Сталася помилка при загрузці
-                        </Typography>
-                    </Box> :
-
-                    <Stack padding={1} display='flex' justifyContent="space-between" flexDirection="row" alignItems='center'>
-                        <TextField placeholder='Пошук...' size='small' sx={{ width: { md: '35%' } }} onKeyDown={handleKeyDown} onChange={(e) => changeFilter('search', e.target.value)} />
-                        <Stack direction='row' display='flex' alignItems='center'>
-                            <FormControl size='small' sx={{ marginInline: 1, minWidth: '121px' }}>
-                                <InputLabel id="category-select-label">Категорія</InputLabel>
-                                <Select
-                                    labelId="category-select-label"
-                                    id="category-select"
-                                    value={filter.categoryId}
-                                    label="Категорія"
-                                    onChange={(e) => changeFilter('category', e.target.value)}
-                                >
-                                    <MenuItem value={-1}>
-                                        <em>Всі</em>
-                                    </MenuItem>
-                                    {categories?.map(category =>
-                                        <MenuItem key={category.id} value={category.id}>{t(category.name)}</MenuItem>
-                                    )}
-                                </Select>
-                            </FormControl>
-                            <Button variant='outlined' endIcon={<SwapVertIcon color1={filter.order ? theme.palette.primary.main : theme.palette.secondary.main} color2={filter.order ? theme.palette.secondary.main : theme.palette.primary.main} />} onClick={() => changeFilter('order', !filter.order)}>
-                                Останні
-                            </Button>
-                        </Stack>
+            <Loading
+                loading={categoriesLoading}
+                skeleton={<Skeleton variant="rectangular" height='40px' sx={{ marginBlock: 1 }} />}
+                height='56px'
+                error={Boolean(categoriesError)}
+                refetch={categoriesRefetch}
+            >
+                <Stack padding={1} display='flex' justifyContent="space-between" flexDirection="row" alignItems='center'>
+                    <TextField placeholder='Пошук...' size='small' sx={{ width: { md: '35%' } }} onKeyDown={handleKeyDown} onChange={(e) => changeFilter('search', e.target.value)} />
+                    <Stack direction='row' display='flex' alignItems='center'>
+                        <FormControl size='small' sx={{ marginInline: 1, minWidth: '121px' }}>
+                            <InputLabel id="category-select-label">Категорія</InputLabel>
+                            <Select
+                                labelId="category-select-label"
+                                id="category-select"
+                                value={filter.categoryId}
+                                label="Категорія"
+                                onChange={(e) => changeFilter('category', e.target.value)}
+                            >
+                                <MenuItem value={-1}>
+                                    <em>Всі</em>
+                                </MenuItem>
+                                {categories?.map(category =>
+                                    <MenuItem key={category.id} value={category.id}>{t(category.name)}</MenuItem>
+                                )}
+                            </Select>
+                        </FormControl>
+                        <Button variant='outlined' endIcon={<SwapVertIcon color1={filter.order ? theme.palette.primary.main : theme.palette.secondary.main} color2={filter.order ? theme.palette.secondary.main : theme.palette.primary.main} />} onClick={() => changeFilter('order', !filter.order)}>
+                            Останні
+                        </Button>
                     </Stack>
-            }
+                </Stack>
+            </Loading>
 
-            {goodsLoading ? <GoodsSkeleton /> :
-                goodsError ?
-                    <Typography variant='subtitle1' color='error' textAlign='center'>
-                        Сталася помилка при загрузці
-                    </Typography> :
-                    <>
-                        <Grid container spacing={2} sx={{ mt: '4px' }}>
-                            {goods?.data.map(good =>
-                                <GoodCard key={good.id} type='edit' good={good}
-                                    editClick={(event) => {
-                                        event.preventDefault();
-                                        setGoodProcessing({ action: 'edit', id: good.id });
-                                        setEditId(good.id);
-                                    }}
-                                    deleteClick={(event) => {
-                                        event.preventDefault();
-                                        setGoodProcessing({ action: 'delete', id: good.id });
-                                    }}
-                                />
-                            )}
-                        </Grid>
-                        {goods?.pages && goods.pages > 1 &&
-                            <Pagination count={goods?.pages} variant="outlined" color="primary" page={filter.page} onChange={(e, value) => changeFilter('page', value)}
-                                size='large'
-                                sx={{
-                                    paddingBlock: 2,
-                                    display: 'flex',
-                                    justifyContent: 'center'
-                                }}
-                            />
-                        }
-                    </>
-            }
+            <Loading
+                loading={goodsLoading}
+                skeleton={<GoodsSkeleton />}
+                error={Boolean(goodsError)}
+                refetch={goodsRefetch}
+            >
+                <Grid container spacing={2} sx={{ mt: '4px' }}>
+                    {goods?.data.map(good =>
+                        <GoodCard key={good.id} type='edit' good={good}
+                            editClick={(event) => {
+                                event.preventDefault();
+                                setGoodProcessing({ action: 'edit', id: good.id });
+                                setEditId(good.id);
+                            }}
+                            deleteClick={(event) => {
+                                event.preventDefault();
+                                setGoodProcessing({ action: 'delete', id: good.id });
+                            }}
+                        />
+                    )}
+                </Grid>
+                {goods?.pages && goods.pages > 1 &&
+                    <Pagination count={goods?.pages} variant="outlined" color="primary" page={filter.page} onChange={(e, value) => changeFilter('page', value)}
+                        size='large'
+                        sx={{
+                            paddingBlock: 2,
+                            display: 'flex',
+                            justifyContent: 'center'
+                        }}
+                    />
+                }
+            </Loading>
 
             <GoodDialog open={goodProcessing.action === 'add' || goodProcessing.action === 'edit'} handleClose={handleClose} type={goodProcessing.action === 'edit' ? 'edit' : 'add'}
                 data={goodProcessing.action === 'edit' && goodForChange ? {

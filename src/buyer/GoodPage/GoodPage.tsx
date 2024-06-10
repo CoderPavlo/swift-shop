@@ -6,16 +6,17 @@ import { useParams } from 'react-router';
 import { baseUrl } from '../../store/services/baseUrl';
 import GoodsSkeleton from '../HomePage/skeletons/GoodsSkeleton';
 import GoodCard from '../../general/components/cards/GoodCard';
+import Loading from '../../general/components/Loading';
 
 export default function GoodPage() {
     const [quantity, setQuantity] = React.useState<number>(1);
     const { id } = useParams();
     const { data: good, isFetching, error } = goodAPI.useFetchGoodByIdQuery(Number(id || '0'));
     const [page, setPage] = React.useState<number>(1);
-    const { data: similarGoods, isFetching: similarLoading, error: similarError } = goodAPI.useFetchSimilarGoodsQuery({ id: Number(id || '0'), page: page });
-    React.useEffect(()=>{window.scrollTo({ top: 0, behavior: 'smooth' }); setPage(1)}, [id])
+    const { data: similarGoods, isFetching: similarLoading, error: similarError, refetch: similarRefetch } = goodAPI.useFetchSimilarGoodsQuery({ id: Number(id || '0'), page: page });
+    React.useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setPage(1) }, [id])
     return (
-        <Grid container spacing={2} mt={0} ml={0} sx={{width: '100%'}}>
+        <Grid container spacing={2} mt={0} ml={0} sx={{ width: '100%' }}>
             {error ? <Typography variant='subtitle1' color='error' textAlign='center'>
                 Сталася помилка при загрузці
             </Typography> :
@@ -76,40 +77,35 @@ export default function GoodPage() {
                 </>
 
             }
-            {similarError ? <Typography variant='subtitle1' color='error' textAlign='center'>
-                Сталася помилка при загрузці
-            </Typography> :
-                <>
-                    <Typography variant="subtitle1" color="primary" textTransform='uppercase' sx={{width: '100%', mt: 1}}>
-                        {similarLoading ? <Skeleton /> : 'Подібні товари'}
-                    </Typography>
-                    {similarLoading ?
-                        <GoodsSkeleton /> :
-                        <>
-                            <Grid container spacing={2} sx={{ mt: '4px' }}>
-                                {similarGoods?.data.map(good =>
-                                    <GoodCard key={good.id} type='view' good={good} />
-                                )}
-                            </Grid>
-                            {similarGoods?.pages && similarGoods?.pages > 1 &&
-                                <Pagination count={similarGoods?.pages} variant="outlined" color="primary" page={page} onChange={(e, page) => { setPage(page); window.scrollTo({ top: 600, behavior: 'smooth' }); }}
-                                    size='large'
-                                    sx={{
-                                        paddingBlock: 2,
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        width: '100%'
-                                    }}
-                                />
-                            }
-                        </>
-
-                    }
-                </>
-            }
-
-
-
+            <Loading
+                loading={similarLoading}
+                skeleton={<>
+                    <Skeleton height='28px' width='100%' variant="rounded" sx={{ mt: 1, mb: 2 }} />
+                    <GoodsSkeleton />
+                </>}
+                error={Boolean(similarError)}
+                refetch={similarRefetch}
+            >
+                <Typography variant="subtitle1" color="primary" textTransform='uppercase' sx={{ width: '100%', mt: 1 }}>
+                    Подібні товари
+                </Typography>
+                <Grid container spacing={2} sx={{ mt: '4px' }}>
+                    {similarGoods?.data.map(good =>
+                        <GoodCard key={good.id} type='view' good={good} />
+                    )}
+                </Grid>
+                {similarGoods?.pages && similarGoods?.pages > 1 &&
+                    <Pagination count={similarGoods?.pages} variant="outlined" color="primary" page={page} onChange={(e, page) => { setPage(page); window.scrollTo({ top: 600, behavior: 'smooth' }); }}
+                        size='large'
+                        sx={{
+                            paddingBlock: 2,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            width: '100%'
+                        }}
+                    />
+                }
+            </Loading>
         </Grid>
     )
 }

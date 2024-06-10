@@ -1,6 +1,6 @@
 import React from 'react'
 import { Stack, Typography, Box, Checkbox, Grid, Skeleton, Pagination } from '@mui/material'
-import { Delete, ShoppingBag} from '@mui/icons-material';
+import { Delete, ShoppingBag } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import Counts from './components/Counts';
 import { orderAPI } from '../../store/services/orderAPI';
@@ -9,6 +9,7 @@ import StoreLink from '../../general/components/links/StoreLink';
 import { Link } from 'react-router-dom';
 import { ICartOrders, IGroupedCarts } from '../../models/IOrder';
 import { LoadingButton } from '@mui/lab';
+import Loading from '../../general/components/Loading';
 
 export default function CartPage() {
     const theme = useTheme();
@@ -16,7 +17,7 @@ export default function CartPage() {
     const { data: pageData, isFetching, error, refetch } = orderAPI.useFetchCartQuery(page);
     const [data, setData] = React.useState<IGroupedCarts[]>();
     const [deleteFromCart, { isLoading: deleteLoading, error: deleteError }] = orderAPI.useDeleteFromCartMutation();
-    const [buyCartGood, {isLoading: buyLoading, error: buyError}] = orderAPI.useBuyCartGoodMutation();
+    const [buyCartGood, { isLoading: buyLoading, error: buyError }] = orderAPI.useBuyCartGoodMutation();
     React.useEffect(() => setData(pageData?.data), [pageData])
 
     const changeCount = (id: number, count: number) => {
@@ -146,13 +147,13 @@ export default function CartPage() {
 
     const buySelected = async () => {
         if (!data) return;
-        let goods : ICartOrders[] = [];
+        let goods: ICartOrders[] = [];
         for (let groupedCart of data) {
-            if(getSellerSelected(groupedCart.seller.id) || getSellerIndeterminate(groupedCart.seller.id)){
+            if (getSellerSelected(groupedCart.seller.id) || getSellerIndeterminate(groupedCart.seller.id)) {
                 let carts_id = [];
                 let counts = [];
                 for (let cart of groupedCart.carts)
-                    if (cart.selected){
+                    if (cart.selected) {
                         carts_id.push(cart.id);
                         counts.push(cart.count);
                     }
@@ -161,12 +162,12 @@ export default function CartPage() {
                     counts: counts,
                 });
             }
-            
-                    
+
+
         }
         console.log(goods);
-        if(goods.length > 0)
-            await buyCartGood({goods: goods});
+        if (goods.length > 0)
+            await buyCartGood({ goods: goods });
 
     }
     return (
@@ -180,64 +181,60 @@ export default function CartPage() {
                         {`${getSelectedCount()} вибрано`}
                     </Typography>
                 </Stack>
-
-                {isFetching ? <>
-                    <Skeleton variant="rounded" width='100%' height='51.6px' sx={{ borderRadius: '10px', borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }} />
-                    {Array.from({ length: 5 }, (_, i) => (
-                        <Skeleton variant="rectangular" width='100%' height='200px' sx={{ mt: '1px' }} />
-                    ))}
-                </> :
-                    error ?
-                        <Typography variant='subtitle1' color='error' textAlign='center'>
-                            Сталася помилка при загрузці
-                        </Typography> :
-                        <>
-                            {data && data.map(groopedCart =>
-                                <Box key={groopedCart.seller.id} sx={{ marginBlock: 1 }}>
-                                    <Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', border: `1px solid ${theme.palette.background.paper}`, borderRadius: '10px 10px 0px 0px', padding: '1px 8px', mb: '1px' }}>
-                                        <Checkbox sx={{ mr: 1 }} onChange={() => changeSelectedSeller(groopedCart.seller.id)} checked={getSellerSelected(groopedCart.seller.id)} indeterminate={getSellerIndeterminate(groopedCart.seller.id)} />
-                                        <StoreLink to={`shop/${groopedCart.seller.id}`} name={groopedCart.seller.name} src={baseUrl + groopedCart.seller.avatar} />
-                                    </Box>
-                                    {groopedCart.carts.map(cart =>
-                                        <Box key={cart.id} sx={{ display: 'flex', alignItems: 'center', padding: '1px 8px', border: `1px solid ${theme.palette.background.paper}` }}>
-                                            <Checkbox sx={{ mr: 1 }} onChange={() => changeSelected(cart.id)} checked={Boolean(cart.selected)} />
-                                            <Link to={`/goods/${cart.good.id}`} style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', width: '100%' }}>
-                                                <img src={baseUrl + cart.good.image} alt={cart.good.name} style={{ aspectRatio: 1, maxHeight: '200px', height: '100%' }} />
-                                                <Grid container flexGrow={1} height='100%' spacing={2}>
-                                                    <Grid item xs={12} md={6} display='flex' flexDirection='column' justifyContent='space-around' alignItems='center' height={{ xs: 'fit-content', md: '100%' }}>
-                                                        <Typography variant='body1' color='text.primary'>
-                                                            {cart.good.name}
-                                                        </Typography>
-                                                    </Grid>
-                                                    <Grid item xs={6} md={3} display='flex' justifyContent='center'>
-                                                        <Counts min={1} max={cart.good.count} value={cart.count} onChange={(value) => changeCount(cart.id, value)} />
-                                                    </Grid>
-                                                    <Grid item xs={6} md={3} display='flex' flexDirection='column' justifyContent='center' alignItems={{ md: 'center' }}>
-                                                        <Typography variant='subtitle1' color='error' textAlign='center'>
-                                                            $ {cart.good.price}
-                                                        </Typography>
-                                                    </Grid>
-                                                </Grid>
-                                            </Link>
-                                        </Box>
-                                    )}
+                <Loading
+                    loading={isFetching}
+                    skeleton={<>
+                        <Skeleton variant="rounded" width='100%' height='51.6px' sx={{ borderRadius: '10px', borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }} />
+                        {Array.from({ length: 5 }, (_, i) => (
+                            <Skeleton variant="rectangular" width='100%' height='200px' sx={{ mt: '1px' }} />
+                        ))}
+                    </>}
+                    error={Boolean(error)}
+                    refetch={refetch}
+                >
+                    {data && data.map(groopedCart =>
+                        <Box key={groopedCart.seller.id} sx={{ marginBlock: 1 }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', border: `1px solid ${theme.palette.background.paper}`, borderRadius: '10px 10px 0px 0px', padding: '1px 8px', mb: '1px' }}>
+                                <Checkbox sx={{ mr: 1 }} onChange={() => changeSelectedSeller(groopedCart.seller.id)} checked={getSellerSelected(groopedCart.seller.id)} indeterminate={getSellerIndeterminate(groopedCart.seller.id)} />
+                                <StoreLink to={`shop/${groopedCart.seller.id}`} name={groopedCart.seller.name} src={baseUrl + groopedCart.seller.avatar} />
+                            </Box>
+                            {groopedCart.carts.map(cart =>
+                                <Box key={cart.id} sx={{ display: 'flex', alignItems: 'center', padding: '1px 8px', border: `1px solid ${theme.palette.background.paper}` }}>
+                                    <Checkbox sx={{ mr: 1 }} onChange={() => changeSelected(cart.id)} checked={Boolean(cart.selected)} />
+                                    <Link to={`/goods/${cart.good.id}`} style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', width: '100%' }}>
+                                        <img src={baseUrl + cart.good.image} alt={cart.good.name} style={{ aspectRatio: 1, maxHeight: '200px', height: '100%' }} />
+                                        <Grid container flexGrow={1} height='100%' spacing={2}>
+                                            <Grid item xs={12} md={6} display='flex' flexDirection='column' justifyContent='space-around' alignItems='center' height={{ xs: 'fit-content', md: '100%' }}>
+                                                <Typography variant='body1' color='text.primary'>
+                                                    {cart.good.name}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={6} md={3} display='flex' justifyContent='center'>
+                                                <Counts min={1} max={cart.good.count} value={cart.count} onChange={(value) => changeCount(cart.id, value)} />
+                                            </Grid>
+                                            <Grid item xs={6} md={3} display='flex' flexDirection='column' justifyContent='center' alignItems={{ md: 'center' }}>
+                                                <Typography variant='subtitle1' color='error' textAlign='center'>
+                                                    $ {cart.good.price}
+                                                </Typography>
+                                            </Grid>
+                                        </Grid>
+                                    </Link>
                                 </Box>
                             )}
-                            {pageData?.pages && pageData?.pages > 1 &&
-                                <Pagination count={pageData?.pages} variant="outlined" color="primary" page={page} onChange={(e, page) => { setPage(page); window.scrollTo({ top: 600, behavior: 'smooth' }); }}
-                                    size='large'
-                                    sx={{
-                                        paddingBlock: 2,
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        width: '100%'
-                                    }}
-                                />
-                            }
-                        </>
-
-                }
-
+                        </Box>
+                    )}
+                    {pageData?.pages && pageData?.pages > 1 &&
+                        <Pagination count={pageData?.pages} variant="outlined" color="primary" page={page} onChange={(e, page) => { setPage(page); window.scrollTo({ top: 600, behavior: 'smooth' }); }}
+                            size='large'
+                            sx={{
+                                paddingBlock: 2,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                width: '100%'
+                            }}
+                        />
+                    }
+                </Loading>
             </Box>
             <Box sx={{ width: { xs: 'calc(100% - 16px)', sm: 'calc(100% - 91px)' }, background: theme.palette.background.paper, position: 'fixed', top: { xs: 'calc(100vh - 140px)', sm: 'calc(100vh - 76px)' } }} display='flex' justifyContent='space-between' paddingInline={3} paddingBlock={1}>
                 <Box>
@@ -258,12 +255,12 @@ export default function CartPage() {
                         Видалити обране
                     </LoadingButton>
                     <LoadingButton variant='outlined' sx={{ ml: 1 }} disabled={getSelectedCount() === 0}
-                    loading={buyLoading}
-                    loadingPosition="start"
-                    startIcon={<ShoppingBag />}
-                    onClick={buySelected}
-                    disableElevation
-                    size="large"  color="primary"> 
+                        loading={buyLoading}
+                        loadingPosition="start"
+                        startIcon={<ShoppingBag />}
+                        onClick={buySelected}
+                        disableElevation
+                        size="large" color="primary">
                         Купити
                     </LoadingButton>
                 </Stack>
